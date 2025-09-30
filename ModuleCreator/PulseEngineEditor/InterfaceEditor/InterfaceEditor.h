@@ -13,12 +13,13 @@
 #ifndef INTERFACE_EDITOR_H
 #define INTERFACE_EDITOR_H
 
+#include "pch.h"
+
 #include "Common/common.h"
 #include "Common/dllExport.h"
 #include "PulseEngineEditor/InterfaceEditor/Synapse/NodeMenuRegistry.h"
 #include "PulseEngineEditor/InterfaceEditor/Synapse/Node.h"
 #include <unordered_map>
-#include <string>
 #include <filesystem>
 
 class PulseEngineBackend;

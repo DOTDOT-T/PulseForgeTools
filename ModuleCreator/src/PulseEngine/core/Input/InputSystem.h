@@ -1,9 +1,32 @@
+/**
+ * @file InputSystem.h
+ * @author Dorian LEXTERIAQUE (dlexteriaque@gmail.com)
+ * @brief simple class to manage inputs for different platform
+ * @version 0.1
+ * @date 2025-09-29
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #pragma once
+
+#include "pch.h"
+#include "PulseEngine/core/FileManager/FileManager.h"
+#include "PulseEngine/core/FileManager/FileReader/FileReader.h"
+
 #include <windows.h>
 #include "Common/dllExport.h"
 
 #define LEFT_MOUSE_BUTTON 0
 #define RIGHT_MOUSE_BUTTON 1
+
+struct OneBinding {
+    int actionId;
+    int button;
+
+    OneBinding() : actionId(-1), button(-1) {}
+    OneBinding(int actionId, int button) : actionId(actionId), button(button) {}
+};
 
 class PULSE_ENGINE_DLL_API InputSystem {
 public:
@@ -31,6 +54,11 @@ public:
 
     double getMouseX() const;
     double getMouseY() const;
+
+    OneBinding GetOneBinding(int actionId) const;
+    void ChangeBinding(OneBinding newBinding, int actionId);
+
+    void SaveBindingsToFile();
 
 private:
     struct KeyInfo {

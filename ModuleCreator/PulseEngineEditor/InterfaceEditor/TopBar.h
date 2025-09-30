@@ -14,6 +14,8 @@
 #ifndef TOPBAR_H
 #define TOPBAR_H
 
+#include "pch.h"
+
 #include "Common/common.h"
 #include "Common/dllExport.h"
 

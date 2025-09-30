@@ -1,6 +1,8 @@
 #ifndef SYNAPSE_H
 #define SYNAPSE_H
 
+#include "pch.h"
+
 #include "Common/common.h"
 #include "Common/dllExport.h"
 #include "PulseEngineEditor/InterfaceEditor/Synapse/NodeMenuRegistry.h"

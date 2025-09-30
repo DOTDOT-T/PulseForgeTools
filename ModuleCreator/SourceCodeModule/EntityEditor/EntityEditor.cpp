@@ -11,6 +11,7 @@
 #include "PulseEngine/core/GUID/GuidGenerator.h"
 #include "PulseEngine/API/EngineApi.h"
 #include "PulseEngine/core/GUID/GuidGenerator.h"
+#include "PulseEngine/API/GameEntity.h"
 #include "Shader.h"
 #include "camera.h"
 #include <windows.h>
@@ -73,8 +74,8 @@ void EntityEditor::Render()
     PulseEngine::Vector2 oneWindow = PulseEngine::Vector2(windowSize.x / 2 - 20, windowSize.y - 65);
     ManageCamera();
 
-    PulseInterfaceAPI::SameLine();
-    PulseInterfaceAPI::RenderCameraToInterface(&previewData, cam, "Entity Editor", PulseEngine::Vector2(windowSize.x * 0.5f - 20, windowSize.y - 65), entitiesToRender, forRender);
+     PulseInterfaceAPI::SameLine();
+     PulseInterfaceAPI::RenderCameraToInterface(&previewData, cam, "Entity Editor", PulseEngine::Vector2(windowSize.x * 0.5f - 20, windowSize.y - 65), entitiesToRender, forRender);
     PulseInterfaceAPI::SameLine();
     PulseInterfaceAPI::BeginChild("entity data", PulseEngine::Vector2(-1.0f, -1.0f), true);
     PulseInterfaceAPI::BeginChild("Entity Properties", PulseEngine::Vector2(windowSize.x * 0.5f - 20, windowSize.y *0.5f - 65), true);
