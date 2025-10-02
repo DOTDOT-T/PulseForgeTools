@@ -172,6 +172,7 @@ void EntityEditor::ManageCamera()
 {
     if(PulseInterfaceAPI::IsCurrentWindowFocused())
     {
+        selectedEntity->SetPosition(selectedEntity->GetPosition() + PulseEngine::Vector3(0.0f,1.0f * PulseEngineInstance->GetDeltaTime(), 0.0f)); // Ensure the entity position is up-to-date
         if(GetAsyncKeyState(VK_LBUTTON) & 0x8000)
         {
             distCam += PulseInterfaceAPI::MouseDelta().y * 0.1f;
@@ -183,8 +184,9 @@ void EntityEditor::ManageCamera()
             if (cam->Pitch > 89.0f) cam->Pitch = 89.0f;
             if (cam->Pitch < -89.0f) cam->Pitch = -89.0f;
 
-            cam->Position = PulseEngine::MathUtils::RotateAround(selectedEntity->GetPosition(), cam->Yaw, cam->Pitch, distCam);
+            cam->Position = selectedEntity->GetPosition() - PulseEngine::Vector3(0.0f, 0.0f, -5.0f) ;
             cam->Front = (selectedEntity->GetPosition() - cam->Position).Normalized();
+
         }
     }
 }

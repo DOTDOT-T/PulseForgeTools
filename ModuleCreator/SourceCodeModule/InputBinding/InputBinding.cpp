@@ -83,10 +83,9 @@ void InputBinding::Render()
                         if(PulseInterfaceAPI::Selectable(std::string(1, TurnIntToChar(i)), newBind.actionId == i))
                         {
                             newBind.actionId = i;
+                            inputSystem->ChangeBinding(newBind, bindingToModify);
                         }
 
-                        inputSystem->ChangeBinding(newBind, bindingToModify);
-                        inputSystem->SaveBindingsToFile();
                     }
                     PulseInterfaceAPI::EndCombo();
                 }
