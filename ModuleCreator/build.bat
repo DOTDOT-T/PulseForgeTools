@@ -1,4 +1,4 @@
-g++ -DBUILDING_DLL -DPULSE_WINDOWS -DPULSE_GRAPHIC_OPENGL -fvisibility=default ^
+g++ -DBUILDING_DLL -DENGINE_EDITOR -DPULSE_WINDOWS -DPULSE_GRAPHIC_OPENGL -fvisibility=default ^
 -shared -I./src -I. -I./PulseEngineEditor -I./include -Iinclude/asio -Iinclude/websocketpp -Iinclude -Iimgui ^
 SourceCodeModule/EntityEditor/EntityEditor.cpp ^
 -Lexternal/assimp/lib ^

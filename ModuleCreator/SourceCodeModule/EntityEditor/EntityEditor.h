@@ -6,8 +6,11 @@
 
 #include  "PulseEngine/ModuleLoader/IModuleInterface/IModuleInterface.h"
 
-class Mesh;
 
+class Mesh;
+class RenderableMesh;
+class SkeletalMesh;
+class StaticMesh;
 class EntityEditor : public IModuleInterface
 {
     public:
@@ -33,7 +36,7 @@ class EntityEditor : public IModuleInterface
         
         Camera* cam;
         Entity* selectedEntity;
-        Mesh* selectedData = nullptr;
+        RenderableMesh* selectedData = nullptr;
         Shader* forRender;
         PulseEngine::Vector2 previewData;
         float distCam = 5.0f;

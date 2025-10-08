@@ -10,6 +10,7 @@
 #include "PulseEngine/core/Material/Material.h"
 #include "PulseEngine/core/GUID/GuidGenerator.h"
 #include "PulseEngine/core/Meshes/primitive/Primitive.h"
+#include "PulseEngine/core/FileManager/FileReader/FileReader.h"
 #include "Shader.h"
 #include "camera.h"
 #include <windows.h>
@@ -107,17 +108,19 @@ void MaterialEditor::Render()
 
             for (const auto& texture : materialSelected->GetAllTextures())
             {
-                if (texture.second)
+                if (texture.second && !texture.second->GetPath().empty())
                 {
                     materialData[texture.first] = texture.second->GetPath();
                 }
             }
 
-            std::ofstream outFile(filePath);
-            outFile << materialData.dump(4);
-            outFile.close();
-
-            std::cout << "Material saved to " << filePath << std::endl;
+            std::ofstream file(std::string(ASSET_PATH) + filePath);
+            if (file.is_open())
+            {
+                file << materialData.dump(4); // Pretty print with 4 spaces
+                file.close();
+                std::cout << "Material saved to " << filePath << std::endl;
+            }
         }
     }
 
@@ -191,7 +194,7 @@ void MaterialEditor::NewFileClicked(const ClickedFileData &data)
             PulseInterfaceAPI::ChangeWindowState(this, true);
             materialSelected = MaterialManager::loadMaterial(fullPath);
             materialRenderer->SetMaterial(materialSelected);
-            std::cout << "new material selected" << std::endl;
+            std::cout << "new material selected " << fullPath << std::endl;
         }
     }
 

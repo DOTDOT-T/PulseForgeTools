@@ -7,6 +7,9 @@
 #include "PulseEngine/CustomScripts/IScripts.h"
 #include "PulseEngine/CustomScripts/ScriptsLoader.h"
 #include "PulseEngine/core/Meshes/Mesh.h"
+#include "PulseEngine/core/Meshes/RenderableMesh.h"
+#include "PulseEngine/core/Meshes/StaticMesh.h"
+#include "PulseEngine/core/Meshes/SkeletalMesh.h"
 #include "PulseEngine/core/Material/Material.h"
 #include "PulseEngine/core/GUID/GuidGenerator.h"
 #include "PulseEngine/API/EngineApi.h"
@@ -172,11 +175,6 @@ void EntityEditor::ManageCamera()
 {
     if(PulseInterfaceAPI::IsCurrentWindowFocused())
     {
-        selectedEntity->SetPosition(selectedEntity->GetPosition() + PulseEngine::Vector3(0.0f,1.0f * PulseEngineInstance->GetDeltaTime(), 0.0f)); // Ensure the entity position is up-to-date
-        if(GetAsyncKeyState(VK_LBUTTON) & 0x8000)
-        {
-            distCam += PulseInterfaceAPI::MouseDelta().y * 0.1f;
-        }
         if (selectedEntity && (GetAsyncKeyState(VK_RBUTTON) & 0x8000))
         {
             cam->Yaw += PulseInterfaceAPI::MouseDelta().x * 0.1f;
@@ -250,7 +248,7 @@ void EntityEditor::AddMeshToEntity()
             {
                 if (PulseInterfaceAPI::Selectable(pr.second, isSelected))
                 {
-                    Mesh *newMesh = GuidReader::GetMeshFromGuid(std::stoull(pr.first));
+                    RenderableMesh *newMesh = GuidReader::GetMeshFromGuid(std::stoull(pr.first));
                     newMesh->SetGuid(std::stoull(pr.first));
                     newMesh->SetName(pr.second);
                     if (newMesh)
