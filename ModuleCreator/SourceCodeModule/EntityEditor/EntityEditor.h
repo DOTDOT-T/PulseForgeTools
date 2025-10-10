@@ -5,6 +5,7 @@
 #include "Common/dllExport.h"
 
 #include  "PulseEngine/ModuleLoader/IModuleInterface/IModuleInterface.h"
+#include "PulseEngineEditor/InterfaceEditor/InterfaceAPI/PulseInterfaceAPI.h"
 
 
 class Mesh;
@@ -19,6 +20,8 @@ class EntityEditor : public IModuleInterface
         void Initialize() override;
         void Shutdown() override;
         void Render() override;
+
+        void SaveEntityToFile();
 
         void ManageCamera();
 
@@ -40,6 +43,9 @@ class EntityEditor : public IModuleInterface
         Shader* forRender;
         PulseEngine::Vector2 previewData;
         float distCam = 5.0f;
+        bool isAddingToEntity = false;
+        bool isSeekingScripts = false;
+        std::vector<ContextMenuItem> scriptsContextMenu;
 };
 
 #endif

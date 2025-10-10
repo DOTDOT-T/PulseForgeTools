@@ -7,9 +7,9 @@ lib/libPulseEngineEditor.a ^
 -lassimp -lws2_32 -lwinmm -lmswsock ^
 -o Output/EntityEditor.dll
 
-@REM if %errorlevel% neq 0 (
-@REM     echo Échec de la compilation de la DLL !
-@REM     exit /b %errorlevel%
-@REM ) else (
-@REM     copy /Y "Output/EntityEditor.dll" "../engine/PulseEngineBuild/Modules/Interface/EntityEditor.dll"
-@REM )
+@REM  if %errorlevel% neq 0 (
+@REM      echo Échec de la compilation de la DLL !
+@REM      exit /b %errorlevel%
+@REM  ) else (
+@REM      copy /Y "Output/EntityEditor.dll" "../../PulseEngineSource/Build/Modules/Interface/EntityEditor.dll"
+@REM  )

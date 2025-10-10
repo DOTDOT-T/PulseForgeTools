@@ -81,7 +81,7 @@ void EntityEditor::Render()
      PulseInterfaceAPI::RenderCameraToInterface(&previewData, cam, "Entity Editor", PulseEngine::Vector2(windowSize.x * 0.5f - 20, windowSize.y - 65), entitiesToRender, forRender);
     PulseInterfaceAPI::SameLine();
     PulseInterfaceAPI::BeginChild("entity data", PulseEngine::Vector2(-1.0f, -1.0f), true);
-    PulseInterfaceAPI::BeginChild("Entity Properties", PulseEngine::Vector2(windowSize.x * 0.5f - 20, windowSize.y *0.5f - 65), true);
+    PulseInterfaceAPI::BeginChild("Entity Properties", PulseEngine::Vector2(-1.0f, windowSize.y *0.5f - 65), true);
     PulseInterfaceAPI::WriteText("Entity Properties");
 
     if (selectedEntity)
@@ -110,71 +110,159 @@ void EntityEditor::Render()
         }
     }
 
-    if(PulseInterfaceAPI::Button("Save", PulseEngine::Vector2(-1.0f, 0.0f)))
-    {
-        if (selectedEntity)
-        {
-            nlohmann::json_abi_v3_12_0::json entityData;
-            entityData["Guid"] = std::to_string(selectedEntity->GetGuid());
-
-            for (const auto& mesh : selectedEntity->GetMeshes())
-            {
-                nlohmann::json meshJson;
-                meshJson["Guid"] = std::to_string(mesh->GetGuid());
-                meshJson["Position"] = { mesh->position.x, mesh->position.y, mesh->position.z };
-                meshJson["Rotation"] = { mesh->rotation.x, mesh->rotation.y, mesh->rotation.z };
-                meshJson["Scale"] = { mesh->scale.x, mesh->scale.y, mesh->scale.z };
-                meshJson["Name"] = mesh->GetName();
-                meshJson["MeshPath"] = mesh->GetName();
-                entityData["Meshes"].push_back(meshJson);
-            }
-
-            for (const auto& script : selectedEntity->GetScripts())
-            {
-                nlohmann::json scriptJson;
-
-                scriptJson["Name"] = script->GetName();
-                scriptJson["Guid"] = script->GetGUID();
-                entityData["Scripts"].push_back(scriptJson);
-            }
-
-            entityData["Material"] = selectedEntity->GetMaterial()->guid;
-
-            std::string filePath = selectedEntity->GetName();
-            std::ofstream file(filePath);
-            if (file.is_open())
-            {
-                file << entityData.dump(4); // Pretty print with 4 spaces
-                file.close();
-                std::cout << "Entity saved to " << filePath << std::endl;
-            }
-            else
-            {
-                std::cerr << "Failed to open file for saving: " << filePath << std::endl;
-            }
-        }
-        else
-        {
-            std::cerr << "No entity selected to save." << std::endl;
-        }
-    }
 
     PulseInterfaceAPI::EndChild();
 
-    PulseInterfaceAPI::BeginChild("Entity specific data modifier", PulseEngine::Vector2(windowSize.x * 0.5f - 20, windowSize.y *0.5f - 65), true);
+    PulseInterfaceAPI::BeginChild("Entity specific data modifier", PulseEngine::Vector2(-1.0f, windowSize.y *0.5f - 65), true);
     if (selectedData) 
     {
         PulseInterfaceAPI::AddTransformModifierForMesh(selectedData, "Entity Transform Modifier");
     }
+    
     PulseInterfaceAPI::EndChild();
+    if(PulseInterfaceAPI::Button("Add to Entity", PulseEngine::Vector2((windowSize.x * 0.3f - 20) * 0.5f, 0.0f)))
+    {
+        isAddingToEntity = true;
+    }
+    PulseInterfaceAPI::SameLine();
+    if(PulseInterfaceAPI::Button("Save", PulseEngine::Vector2((windowSize.x * 0.3f - 20) * 0.5f, 0.0f)))
+    {
+        SaveEntityToFile();
+    }
+
+    if(isAddingToEntity)
+    {
+        PulseInterfaceAPI::OpenContextMenu("adding");
+    }
+
+    PulseInterfaceAPI::ShowContextMenu("adding",
+        {
+            {
+                "Scripts",
+                [&]() mutable
+                {
+                    PulseInterfaceAPI::OpenContextMenu("AddingScripts");
+                    isAddingToEntity = false;
+                        isSeekingScripts = true;
+                    scriptsContextMenu.clear();
+
+                    ContextMenuItem header;
+                    header.label = "all scripts";
+                    header.type = EditorWidgetComponent::TEXT;
+                    header.style["color"]["r"] = 0.15f;
+                    header.style["color"]["g"] = 0.15f;
+                    header.style["color"]["b"] = 0.15f;
+                    header.style["color"]["a"] = 1;
+
+                    scriptsContextMenu.push_back(header);
+
+                    header.type = EditorWidgetComponent::SEPARATOR;
+                    scriptsContextMenu.push_back(header);
+
+
+                    for (const auto &[name, createFunc] : ScriptsLoader::scriptMap)
+                    {
+                        ContextMenuItem newMenu;
+                        newMenu.label = name;
+                        newMenu.type = EditorWidgetComponent::SELECTABLE;
+                        newMenu.onClick =[&]()
+                        {
+                            IScript *newScript = createFunc();
+
+                            //let's create a guid from script name and the date it was created
+                            std::string uniqueString = name + std::to_string(std::time(nullptr));
+                            newScript->SetGUID(GenerateGUIDFromPath(uniqueString));
+                            if (newScript)
+                            {
+                                selectedEntity->AddScript(newScript);
+                            }
+                            isSeekingScripts = false;
+                        };
+                        scriptsContextMenu.push_back(newMenu);
+                    }
+                },
+                EditorWidgetComponent::SELECTABLE
+            
+            },
+            {
+                "Mesh",
+                [&]() mutable
+                {
+                    PulseInterfaceAPI::OpenContextMenu("AddingMeshes");
+                    isAddingToEntity = false;
+
+                },
+                EditorWidgetComponent::SELECTABLE
+            }
+        });
+
+    if(isSeekingScripts)
+    {
+        PulseInterfaceAPI::OpenContextMenu("AddingScripts");
+    }
+
+    PulseInterfaceAPI::ShowContextMenu("AddingScripts",scriptsContextMenu);
+    
     PulseInterfaceAPI::EndChild();
     PulseInterfaceAPI::CloseWindow();
 }
+
+void EntityEditor::SaveEntityToFile()
+        {
+            if (selectedEntity)
+            {
+                nlohmann::json_abi_v3_12_0::json entityData;
+                entityData["Guid"] = std::to_string(selectedEntity->GetGuid());
+
+                for (const auto &mesh : selectedEntity->GetMeshes())
+                {
+                    nlohmann::json meshJson;
+                    meshJson["Guid"] = std::to_string(mesh->GetGuid());
+                    meshJson["Position"] = {mesh->position.x, mesh->position.y, mesh->position.z};
+                    meshJson["Rotation"] = {mesh->rotation.x, mesh->rotation.y, mesh->rotation.z};
+                    meshJson["Scale"] = {mesh->scale.x, mesh->scale.y, mesh->scale.z};
+                    meshJson["Name"] = mesh->GetName();
+                    meshJson["MeshPath"] = mesh->GetName();
+                    entityData["Meshes"].push_back(meshJson);
+                }
+
+                for (const auto &script : selectedEntity->GetScripts())
+                {
+                    nlohmann::json scriptJson;
+                    scriptJson["Name"] = script->GetName();
+                    scriptJson["Guid"] = script->GetGUID();
+                    entityData["Scripts"].push_back(scriptJson);
+                }
+
+                entityData["Material"] = selectedEntity->GetMaterial()->guid;
+
+                std::string filePath = selectedEntity->GetName();
+                std::ofstream file(filePath);
+                if (file.is_open())
+                {
+                    file << entityData.dump(4); // Pretty print with 4 spaces
+                    file.close();
+                    std::cout << "Entity saved to " << filePath << std::endl;
+                }
+                else
+                {
+                    std::cerr << "Failed to open file for saving: " << filePath << std::endl;
+                }
+            }
+            else
+            {
+                std::cerr << "No entity selected to save." << std::endl;
+            }
+        }
 
 void EntityEditor::ManageCamera()
 {
     if(PulseInterfaceAPI::IsCurrentWindowFocused())
     {
+        if(GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+        {
+            distCam += PulseInterfaceAPI::MouseDelta().y * 0.1f;
+        }
         if (selectedEntity && (GetAsyncKeyState(VK_RBUTTON) & 0x8000))
         {
             cam->Yaw += PulseInterfaceAPI::MouseDelta().x * 0.1f;
@@ -182,7 +270,7 @@ void EntityEditor::ManageCamera()
             if (cam->Pitch > 89.0f) cam->Pitch = 89.0f;
             if (cam->Pitch < -89.0f) cam->Pitch = -89.0f;
 
-            cam->Position = selectedEntity->GetPosition() - PulseEngine::Vector3(0.0f, 0.0f, -5.0f) ;
+            cam->Position = PulseEngine::MathUtils::RotateAround(selectedEntity->GetPosition(), cam->Yaw, cam->Pitch, distCam);
             cam->Front = (selectedEntity->GetPosition() - cam->Position).Normalized();
 
         }
@@ -201,8 +289,6 @@ void EntityEditor::EntityMeshesManager()
         // Give each child and popup a unique ID
         std::string childId = "MeshProperties##" + std::to_string(counter);
         std::string popupId = "MeshContextMenu##" + std::to_string(counter);
-
-        PulseInterfaceAPI::BeginChild(childId.c_str(), PulseEngine::Vector2(300.0f, 100.0f), true); 
 
         // Selectable mesh entry
         if (PulseInterfaceAPI::Selectable(("mesh " + std::to_string(counter) + " " + mesh->GetName()).c_str()))
@@ -224,7 +310,6 @@ void EntityEditor::EntityMeshesManager()
             }
         });
 
-        PulseInterfaceAPI::EndChild();
         ++it;
         counter++;
     }
