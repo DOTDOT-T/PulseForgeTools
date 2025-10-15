@@ -86,8 +86,8 @@ void EntityEditor::Render()
 
     if (selectedEntity)
     {
-        static bool scriptOpen = false;
-        static bool meshesOpen = false;
+        static bool scriptOpen = true;
+        static bool meshesOpen = true;
         if(PulseInterfaceAPI::StartTreeNode("Scripts", &scriptOpen))
         {
             EntityScriptManager();
@@ -190,7 +190,57 @@ void EntityEditor::Render()
                 {
                     PulseInterfaceAPI::OpenContextMenu("AddingMeshes");
                     isAddingToEntity = false;
+                    isAddingMeshes = true;
+                    meshesContextMenu.clear();
 
+                    ContextMenuItem header;
+                    header.label = "all meshes";
+                    header.type = EditorWidgetComponent::TEXT;
+                    header.style["color"]["r"] = 0.15f;
+                    header.style["color"]["g"] = 0.15f;
+                    header.style["color"]["b"] = 0.15f;
+                    header.style["color"]["a"] = 1;
+
+                    meshesContextMenu.push_back(header);
+
+                    header.type = EditorWidgetComponent::SEPARATOR;
+                    meshesContextMenu.push_back(header);
+
+                    for (const auto& pr : GuidReader::GetAllAvailableFiles("guidCollectionMeshes.puid"))
+                    {
+
+                        EDITOR_LOG("first -> " << pr.first << " second -> " << pr.second)
+
+                        ContextMenuItem mesh;
+                        mesh.label = pr.second;
+                        mesh.type = EditorWidgetComponent::SELECTABLE;
+                        const std::string guidStr = pr.first;
+                        const std::string meshName = pr.second;
+
+                        mesh.onClick = [&, guidStr, meshName]() mutable
+                        {
+                            unsigned long long guidValue = 0;
+                            try
+                            {
+                                guidValue = std::stoull(guidStr);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                EDITOR_LOG("Invalid GUID string: " << guidStr << " (" << e.what() << ")");
+                                return;
+                            }
+                            RenderableMesh *newMesh = GuidReader::GetMeshFromGuid((guidValue));
+                            newMesh->SetGuid((guidValue));
+                            newMesh->SetName(meshName);
+                            if (newMesh)
+                            {
+                                selectedEntity->GetMeshes().push_back(newMesh);
+                            }
+                            isAddingMeshes = false;
+                        };
+                        meshesContextMenu.push_back(mesh);
+
+                    }
                 },
                 EditorWidgetComponent::SELECTABLE
             }
@@ -200,8 +250,13 @@ void EntityEditor::Render()
     {
         PulseInterfaceAPI::OpenContextMenu("AddingScripts");
     }
+    if(isAddingMeshes)
+    {
+        PulseInterfaceAPI::OpenContextMenu("AddingMeshes");
+    }
 
     PulseInterfaceAPI::ShowContextMenu("AddingScripts",scriptsContextMenu);
+    PulseInterfaceAPI::ShowContextMenu("AddingMeshes",meshesContextMenu);
     
     PulseInterfaceAPI::EndChild();
     PulseInterfaceAPI::CloseWindow();
@@ -306,7 +361,8 @@ void EntityEditor::EntityMeshesManager()
                 {
                     it = decltype(it)(meshes.erase((++it).base()));
                     delete mesh;
-                }
+                },
+                EditorWidgetComponent::SELECTABLE
             }
         });
 
@@ -314,7 +370,7 @@ void EntityEditor::EntityMeshesManager()
         counter++;
     }
 
-    AddMeshToEntity();
+    // AddMeshToEntity();
 }
 
 void EntityEditor::AddMeshToEntity()
@@ -350,8 +406,6 @@ void EntityEditor::AddMeshToEntity()
 
 void EntityEditor::EntityScriptManager()
 {
-    PulseInterfaceAPI::WriteText("Scripts attached on this Entity :");
-
     auto& scripts = selectedEntity->GetScripts();
 
     static bool hasOpenContextual = false;
@@ -386,7 +440,8 @@ void EntityEditor::EntityScriptManager()
                         scripts.erase(scripts.begin() + currentIndex);
                         currentIndex = -1;
                         currentScript = nullptr;
-                    }
+                    },
+                    EditorWidgetComponent::SELECTABLE
                 }
             });
 
@@ -395,9 +450,6 @@ void EntityEditor::EntityScriptManager()
         ++i; // only increment if we didn’t erase
         
     }
-
-
-    AddScriptToEntity();
 }
 
 

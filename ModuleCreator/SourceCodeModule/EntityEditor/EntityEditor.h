@@ -45,7 +45,9 @@ class EntityEditor : public IModuleInterface
         float distCam = 5.0f;
         bool isAddingToEntity = false;
         bool isSeekingScripts = false;
+        bool isAddingMeshes = false;
         std::vector<ContextMenuItem> scriptsContextMenu;
+        std::vector<ContextMenuItem> meshesContextMenu;
 };
 
 #endif
