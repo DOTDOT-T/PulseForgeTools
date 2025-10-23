@@ -39,10 +39,10 @@ void Viewport::Render()
 
      SceneRenderer();
 
-     // if(PulseInterfaceAPI::Button("Renderer", PulseEngine::Vector2(0.0f,0.0f)))
-     // {
-
-     // }
+     if(PulseInterfaceAPI::Button(std::to_string((int)top).c_str(), PulseEngine::Vector2(0.0f,0.0f)))
+     {
+        top = (TransformOperator)((((int)top) + 1) % 4);
+     }
      PulseInterfaceAPI::CloseWindow();
 }
 
@@ -73,6 +73,6 @@ void Viewport::SceneRenderer()
     if (auto* gizmo = PulseInterfaceAPI::GetSelectedGizmo())
     {
         PulseInterfaceAPI::SetCursorScreenPos(screenPos);
-        PulseInterfaceAPI::RenderGizmo(gizmo, windowSize);
+        PulseInterfaceAPI::RenderGizmo(gizmo, windowSize, top);
     }
 }
