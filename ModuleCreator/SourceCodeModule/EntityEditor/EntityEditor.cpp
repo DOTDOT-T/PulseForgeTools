@@ -38,7 +38,7 @@ void EntityEditor::Initialize()
     PulseInterfaceAPI::AddFunctionToFileClickedCallbacks(
         [this](const ClickedFileData& data) { this->NewFileClicked(data); }
     );
-    forRender = new Shader("PulseEngineEditor/shaders/basic.vert",  "PulseEngineEditor/shaders/basic.frag");
+    forRender = new Shader(std::string(ASSET_PATH) + "shaders/basic.vert", std::string(ASSET_PATH) +  "shaders/basic.frag");
 }
 
 void EntityEditor::Shutdown()
@@ -47,219 +47,232 @@ void EntityEditor::Shutdown()
 
 void EntityEditor::Render()
 {
+    if (!selectedEntity)
+    {
+        std::cout << "[DEBUG] Render skipped: no selected entity\n";
+        return;
+    }
+
     if(!cam)
     {
         cam = new Camera();
     }
     std::vector<Entity*> entitiesToRender;
+    std::cout << "[DEBUG] Rendering entity: " << selectedEntity->GetName() << std::endl;
+    std::cout << " - Shader pointer: " << forRender << std::endl;
+    // std::cout << " - Camera pointer: " << cam << std::endl;
+    // std::cout << " - Mesh count: " << selectedEntity->GetMeshes().size() << std::endl;
+    // std::cout << " - Material pointer: " << selectedEntity->GetMaterial() << std::endl;
 
-    if (selectedEntity)
-    {
-        cam->Position = selectedEntity->GetPosition();
-        cam->Position -= cam->Front * distCam; // Move the camera back a bit
+    // if (selectedEntity)
+    // {
+    //     cam->Position = selectedEntity->GetPosition();
+    //     cam->Position -= cam->Front * distCam; // Move the camera back a bit
 
-        selectedEntity->SetRotation(PulseEngine::Vector3(0.0f, 0.0f, 0.0f)); // Reset rotation for better view
-        entitiesToRender.push_back(selectedEntity);
-    }
+    //     selectedEntity->SetRotation(PulseEngine::Vector3(0.0f, 0.0f, 0.0f)); // Reset rotation for better view
+    //     entitiesToRender.push_back(selectedEntity);
+    // }
 
-    std::string entName = "";
+    // std::string entName = "";
 
-    if(selectedEntity)
-    {
-        entName = "- ";
-        entName += selectedEntity->GetName();
-    }
-
-
-
-    PulseInterfaceAPI::OpenWindow(("Entity Editor " + entName + "###EntityEditor").c_str());
-        PulseEngine::Vector2 windowSize = PulseInterfaceAPI::GetActualWindowSize();
-    PulseEngine::Vector2 oneWindow = PulseEngine::Vector2(windowSize.x / 2 - 20, windowSize.y - 65);
-    ManageCamera();
-
-     PulseInterfaceAPI::SameLine();
-     PulseInterfaceAPI::RenderCameraToInterface(&previewData, cam, "Entity Editor", PulseEngine::Vector2(windowSize.x * 0.5f - 20, windowSize.y - 65), entitiesToRender, forRender);
-    PulseInterfaceAPI::SameLine();
-    PulseInterfaceAPI::BeginChild("entity data", PulseEngine::Vector2(-1.0f, -1.0f), true);
-    PulseInterfaceAPI::BeginChild("Entity Properties", PulseEngine::Vector2(-1.0f, windowSize.y *0.5f - 65), true);
-    PulseInterfaceAPI::WriteText("Entity Properties");
-
-    if (selectedEntity)
-    {
-        static bool scriptOpen = true;
-        static bool meshesOpen = true;
-        if(PulseInterfaceAPI::StartTreeNode("Scripts", &scriptOpen))
-        {
-            EntityScriptManager();
-            PulseInterfaceAPI::EndTreeNode();
-        }
-
-        if(PulseInterfaceAPI::StartTreeNode("Meshes", &meshesOpen))
-        {
-            EntityMeshesManager();
-            PulseInterfaceAPI::EndTreeNode();
-        }
-
-        Material* currentMaterial = selectedEntity->GetMaterial();
-
-        PulseInterfaceAPI::AddMaterialPreview(currentMaterial, PulseEngine::Vector2(50.0f, 50.0f), "Material Preview");
-
-        if (currentMaterial != selectedEntity->GetMaterial())
-        {
-            selectedEntity->SetMaterial(currentMaterial);
-        }
-    }
+    // if(selectedEntity)
+    // {
+    //     entName = "- ";
+    //     entName += selectedEntity->GetName();
+    // }
 
 
-    PulseInterfaceAPI::EndChild();
 
-    PulseInterfaceAPI::BeginChild("Entity specific data modifier", PulseEngine::Vector2(-1.0f, windowSize.y *0.5f - 65), true);
-    if (selectedData) 
-    {
-        PulseInterfaceAPI::AddTransformModifierForMesh(selectedData, "Entity Transform Modifier");
-    }
+    // PulseInterfaceAPI::OpenWindow(("Entity Editor " + entName + "###EntityEditor").c_str());
+    //     PulseEngine::Vector2 windowSize = PulseInterfaceAPI::GetActualWindowSize();
+    // PulseEngine::Vector2 oneWindow = PulseEngine::Vector2(windowSize.x / 2 - 20, windowSize.y - 65);
+    // ManageCamera();
+
+    //  PulseInterfaceAPI::SameLine();
+    //  PulseInterfaceAPI::RenderCameraToInterface(&previewData, cam, "Entity Editor", PulseEngine::Vector2(windowSize.x * 0.5f - 20, windowSize.y - 65), entitiesToRender, forRender);
+    // PulseInterfaceAPI::SameLine();
+    // PulseInterfaceAPI::BeginChild("entity data", PulseEngine::Vector2(-1.0f, -1.0f), true);
+    // PulseInterfaceAPI::BeginChild("Entity Properties", PulseEngine::Vector2(-1.0f, windowSize.y *0.5f - 65), true);
+    // PulseInterfaceAPI::WriteText("Entity Properties");
+
+    // if (selectedEntity)
+    // {
+    //     static bool scriptOpen = true;
+    //     static bool meshesOpen = true;
+    //     if(PulseInterfaceAPI::StartTreeNode("Scripts", &scriptOpen))
+    //     {
+    //         EntityScriptManager();
+    //         PulseInterfaceAPI::EndTreeNode();
+    //     }
+
+    //     if(PulseInterfaceAPI::StartTreeNode("Meshes", &meshesOpen))
+    //     {
+    //         EntityMeshesManager();
+    //         PulseInterfaceAPI::EndTreeNode();
+    //     }
+
+    //     Material* currentMaterial = selectedEntity->GetMaterial();
+    //     if(currentMaterial)
+    //     {
+    //     PulseInterfaceAPI::AddMaterialPreview(currentMaterial, PulseEngine::Vector2(50.0f, 50.0f), "Material Preview");
+    //     }
+
+    //     if (currentMaterial != selectedEntity->GetMaterial())
+    //     {
+    //         selectedEntity->SetMaterial(currentMaterial);
+    //     }
+    // }
+
+
+    // PulseInterfaceAPI::EndChild();
+
+    // PulseInterfaceAPI::BeginChild("Entity specific data modifier", PulseEngine::Vector2(-1.0f, windowSize.y *0.5f - 65), true);
+    // if (selectedData) 
+    // {
+    //     PulseInterfaceAPI::AddTransformModifierForMesh(selectedData, "Entity Transform Modifier");
+    // }
     
-    PulseInterfaceAPI::EndChild();
-    if(PulseInterfaceAPI::Button("Add to Entity", PulseEngine::Vector2((windowSize.x * 0.3f - 20) * 0.5f, 0.0f)))
-    {
-        isAddingToEntity = true;
-    }
-    PulseInterfaceAPI::SameLine();
-    if(PulseInterfaceAPI::Button("Save", PulseEngine::Vector2((windowSize.x * 0.3f - 20) * 0.5f, 0.0f)))
-    {
-        SaveEntityToFile();
-    }
+    // PulseInterfaceAPI::EndChild();
+    // if(PulseInterfaceAPI::Button("Add to Entity", PulseEngine::Vector2((windowSize.x * 0.3f - 20) * 0.5f, 0.0f)))
+    // {
+    //     isAddingToEntity = true;
+    // }
+    // PulseInterfaceAPI::SameLine();
+    // if(PulseInterfaceAPI::Button("Save", PulseEngine::Vector2((windowSize.x * 0.3f - 20) * 0.5f, 0.0f)))
+    // {
+    //     SaveEntityToFile();
+    // }
 
-    if(isAddingToEntity)
-    {
-        PulseInterfaceAPI::OpenContextMenu("adding");
-    }
+    // if(isAddingToEntity)
+    // {
+    //     PulseInterfaceAPI::OpenContextMenu("adding");
+    // }
 
-    PulseInterfaceAPI::ShowContextMenu("adding",
-        {
-            {
-                "Scripts",
-                [&]() mutable
-                {
-                    PulseInterfaceAPI::OpenContextMenu("AddingScripts");
-                    isAddingToEntity = false;
-                        isSeekingScripts = true;
-                    scriptsContextMenu.clear();
+    // PulseInterfaceAPI::ShowContextMenu("adding",
+    //     {
+    //         {
+    //             "Scripts",
+    //             [&]() mutable
+    //             {
+    //                 PulseInterfaceAPI::OpenContextMenu("AddingScripts");
+    //                 isAddingToEntity = false;
+    //                     isSeekingScripts = true;
+    //                 scriptsContextMenu.clear();
 
-                    ContextMenuItem header;
-                    header.label = "all scripts";
-                    header.type = EditorWidgetComponent::TEXT;
-                    header.style["color"]["r"] = 0.15f;
-                    header.style["color"]["g"] = 0.15f;
-                    header.style["color"]["b"] = 0.15f;
-                    header.style["color"]["a"] = 1;
+    //                 ContextMenuItem header;
+    //                 header.label = "all scripts";
+    //                 header.type = EditorWidgetComponent::TEXT;
+    //                 header.style["color"]["r"] = 0.15f;
+    //                 header.style["color"]["g"] = 0.15f;
+    //                 header.style["color"]["b"] = 0.15f;
+    //                 header.style["color"]["a"] = 1;
 
-                    scriptsContextMenu.push_back(header);
+    //                 scriptsContextMenu.push_back(header);
 
-                    header.type = EditorWidgetComponent::SEPARATOR;
-                    scriptsContextMenu.push_back(header);
+    //                 header.type = EditorWidgetComponent::SEPARATOR;
+    //                 scriptsContextMenu.push_back(header);
 
 
-                    for (const auto &[name, createFunc] : ScriptsLoader::scriptMap)
-                    {
-                        ContextMenuItem newMenu;
-                        newMenu.label = name;
-                        newMenu.type = EditorWidgetComponent::SELECTABLE;
-                        newMenu.onClick =[&]()
-                        {
-                            IScript *newScript = createFunc();
+    //                 for (const auto &[name, createFunc] : ScriptsLoader::scriptMap)
+    //                 {
+    //                     ContextMenuItem newMenu;
+    //                     newMenu.label = name;
+    //                     newMenu.type = EditorWidgetComponent::SELECTABLE;
+    //                     newMenu.onClick =[&]()
+    //                     {
+    //                         IScript *newScript = createFunc();
 
-                            //let's create a guid from script name and the date it was created
-                            std::string uniqueString = name + std::to_string(std::time(nullptr));
-                            newScript->SetGUID(GenerateGUIDFromPath(uniqueString));
-                            if (newScript)
-                            {
-                                selectedEntity->AddScript(newScript);
-                            }
-                            isSeekingScripts = false;
-                        };
-                        scriptsContextMenu.push_back(newMenu);
-                    }
-                },
-                EditorWidgetComponent::SELECTABLE
+    //                         //let's create a guid from script name and the date it was created
+    //                         std::string uniqueString = name + std::to_string(std::time(nullptr));
+    //                         newScript->SetGUID(GenerateGUIDFromPath(uniqueString));
+    //                         if (newScript)
+    //                         {
+    //                             selectedEntity->AddScript(newScript);
+    //                         }
+    //                         isSeekingScripts = false;
+    //                     };
+    //                     scriptsContextMenu.push_back(newMenu);
+    //                 }
+    //             },
+    //             EditorWidgetComponent::SELECTABLE
             
-            },
-            {
-                "Mesh",
-                [&]() mutable
-                {
-                    PulseInterfaceAPI::OpenContextMenu("AddingMeshes");
-                    isAddingToEntity = false;
-                    isAddingMeshes = true;
-                    meshesContextMenu.clear();
+    //         },
+    //         {
+    //             "Mesh",
+    //             [&]() mutable
+    //             {
+    //                 PulseInterfaceAPI::OpenContextMenu("AddingMeshes");
+    //                 isAddingToEntity = false;
+    //                 isAddingMeshes = true;
+    //                 meshesContextMenu.clear();
 
-                    ContextMenuItem header;
-                    header.label = "all meshes";
-                    header.type = EditorWidgetComponent::TEXT;
-                    header.style["color"]["r"] = 0.15f;
-                    header.style["color"]["g"] = 0.15f;
-                    header.style["color"]["b"] = 0.15f;
-                    header.style["color"]["a"] = 1;
+    //                 ContextMenuItem header;
+    //                 header.label = "all meshes";
+    //                 header.type = EditorWidgetComponent::TEXT;
+    //                 header.style["color"]["r"] = 0.15f;
+    //                 header.style["color"]["g"] = 0.15f;
+    //                 header.style["color"]["b"] = 0.15f;
+    //                 header.style["color"]["a"] = 1;
 
-                    meshesContextMenu.push_back(header);
+    //                 meshesContextMenu.push_back(header);
 
-                    header.type = EditorWidgetComponent::SEPARATOR;
-                    meshesContextMenu.push_back(header);
+    //                 header.type = EditorWidgetComponent::SEPARATOR;
+    //                 meshesContextMenu.push_back(header);
 
-                    for (const auto& pr : GuidReader::GetAllAvailableFiles("guidCollectionMeshes.puid"))
-                    {
+    //                 for (const auto& pr : GuidReader::GetAllAvailableFiles("guidCollectionMeshes.puid"))
+    //                 {
 
-                        EDITOR_LOG("first -> " << pr.first << " second -> " << pr.second)
+    //                     EDITOR_LOG("first -> " << pr.first << " second -> " << pr.second)
 
-                        ContextMenuItem mesh;
-                        mesh.label = pr.second;
-                        mesh.type = EditorWidgetComponent::SELECTABLE;
-                        const std::string guidStr = pr.first;
-                        const std::string meshName = pr.second;
+    //                     ContextMenuItem mesh;
+    //                     mesh.label = pr.second;
+    //                     mesh.type = EditorWidgetComponent::SELECTABLE;
+    //                     const std::string guidStr = pr.first;
+    //                     const std::string meshName = pr.second;
 
-                        mesh.onClick = [&, guidStr, meshName]() mutable
-                        {
-                            unsigned long long guidValue = 0;
-                            try
-                            {
-                                guidValue = std::stoull(guidStr);
-                            }
-                            catch (const std::exception& e)
-                            {
-                                EDITOR_LOG("Invalid GUID string: " << guidStr << " (" << e.what() << ")");
-                                return;
-                            }
-                            RenderableMesh *newMesh = GuidReader::GetMeshFromGuid((guidValue));
-                            newMesh->SetGuid((guidValue));
-                            newMesh->SetName(meshName);
-                            if (newMesh)
-                            {
-                                selectedEntity->GetMeshes().push_back(newMesh);
-                            }
-                            isAddingMeshes = false;
-                        };
-                        meshesContextMenu.push_back(mesh);
+    //                     mesh.onClick = [&, guidStr, meshName]() mutable
+    //                     {
+    //                         unsigned long long guidValue = 0;
+    //                         try
+    //                         {
+    //                             guidValue = std::stoull(guidStr);
+    //                         }
+    //                         catch (const std::exception& e)
+    //                         {
+    //                             EDITOR_LOG("Invalid GUID string: " << guidStr << " (" << e.what() << ")");
+    //                             return;
+    //                         }
+    //                         RenderableMesh *newMesh = GuidReader::GetMeshFromGuid((guidValue));
+    //                         newMesh->SetGuid((guidValue));
+    //                         newMesh->SetName(meshName);
+    //                         if (newMesh)
+    //                         {
+    //                             selectedEntity->GetMeshes().push_back(newMesh);
+    //                         }
+    //                         isAddingMeshes = false;
+    //                     };
+    //                     meshesContextMenu.push_back(mesh);
 
-                    }
-                },
-                EditorWidgetComponent::SELECTABLE
-            }
-        });
+    //                 }
+    //             },
+    //             EditorWidgetComponent::SELECTABLE
+    //         }
+    //     });
 
-    if(isSeekingScripts)
-    {
-        PulseInterfaceAPI::OpenContextMenu("AddingScripts");
-    }
-    if(isAddingMeshes)
-    {
-        PulseInterfaceAPI::OpenContextMenu("AddingMeshes");
-    }
+    // if(isSeekingScripts)
+    // {
+    //     PulseInterfaceAPI::OpenContextMenu("AddingScripts");
+    // }
+    // if(isAddingMeshes)
+    // {
+    //     PulseInterfaceAPI::OpenContextMenu("AddingMeshes");
+    // }
 
-    PulseInterfaceAPI::ShowContextMenu("AddingScripts",scriptsContextMenu);
-    PulseInterfaceAPI::ShowContextMenu("AddingMeshes",meshesContextMenu);
+    // PulseInterfaceAPI::ShowContextMenu("AddingScripts",scriptsContextMenu);
+    // PulseInterfaceAPI::ShowContextMenu("AddingMeshes",meshesContextMenu);
     
-    PulseInterfaceAPI::EndChild();
-    PulseInterfaceAPI::CloseWindow();
+    // PulseInterfaceAPI::EndChild();
+    // PulseInterfaceAPI::CloseWindow();
 }
 
 void EntityEditor::SaveEntityToFile()
@@ -369,8 +382,6 @@ void EntityEditor::EntityMeshesManager()
         ++it;
         counter++;
     }
-
-    // AddMeshToEntity();
 }
 
 void EntityEditor::AddMeshToEntity()
@@ -501,7 +512,7 @@ void EntityEditor::NewFileClicked(const ClickedFileData &data)
             file >> entityData;
             file.close();
             selectedEntity = new Entity(fullPath, PulseEngine::Vector3(0.0f, 0.0f, 0.0f));
-            selectedEntity = GuidReader::GetEntityFromJson(entityData, selectedEntity);
+            GuidReader::GetEntityFromJson(entityData, selectedEntity);
             if (selectedEntity)
             {
                 selectedEntity->SetName((data.name).string());

@@ -6,6 +6,7 @@
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
 #include "PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.h"
 #include "PulseEngine/core/PulseEngineBackend.h"
+#include "PulseEngineEditor/InterfaceEditor/InterfaceEditor.h"
 #include <WinUser.h>
 
 extern "C" __declspec(dllexport) IModule* CreateModule()
@@ -33,14 +34,16 @@ void Viewport::Shutdown()
 
 void Viewport::Render()
 {
-    PulseInterfaceAPI::OpenWindow("Viewport");
+    // PulseInterfaceAPI::GizmoDebug();
+     PulseInterfaceAPI::OpenWindow("Viewport");
 
-    SceneRenderer();
-    if(PulseInterfaceAPI::Button("Renderer", PulseEngine::Vector2(0.0f,0.0f)))
-    {
+     SceneRenderer();
 
-    }
-    PulseInterfaceAPI::CloseWindow();
+     if(PulseInterfaceAPI::Button(std::to_string((int)top).c_str(), PulseEngine::Vector2(0.0f,0.0f)))
+     {
+        top = (TransformOperator)((((int)top) + 1) % 4);
+     }
+     PulseInterfaceAPI::CloseWindow();
 }
 
 void Viewport::SceneRenderer()
@@ -64,5 +67,12 @@ void Viewport::SceneRenderer()
     windowSize.x -= 100.0f;
     windowSize.y -= 100.0f;
 
+    PulseEngine::Vector2 screenPos = PulseInterfaceAPI::GetCursorScreenPos();
+
     PulseInterfaceAPI::RenderCameraToInterface(&previewData, PulseEngineInstance->GetActiveCamera(), "Viewport", windowSize, PulseEngineInstance->entities);
+    if (auto* gizmo = PulseInterfaceAPI::GetSelectedGizmo())
+    {
+        PulseInterfaceAPI::SetCursorScreenPos(screenPos);
+        PulseInterfaceAPI::RenderGizmo(gizmo, windowSize, top);
+    }
 }

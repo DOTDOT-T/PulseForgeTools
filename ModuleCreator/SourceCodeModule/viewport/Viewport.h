@@ -5,6 +5,7 @@
 #include "Common/dllExport.h"
 
 #include  "PulseEngine/ModuleLoader/IModuleInterface/IModuleInterface.h"
+#include "PulseEngineEditor/InterfaceEditor/InterfaceAPI/PulseInterfaceAPI.h"
 
 class PULSE_ENGINE_DLL_API Viewport : public IModuleInterface
 {
@@ -22,6 +23,7 @@ class PULSE_ENGINE_DLL_API Viewport : public IModuleInterface
 
     private:
         PulseEngine::Vector2 previewData;
+        TransformOperator top = TransformOperator::TRANSLATE;
 };
 
 #endif

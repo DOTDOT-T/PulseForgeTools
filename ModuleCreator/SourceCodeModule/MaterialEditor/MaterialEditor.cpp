@@ -31,15 +31,16 @@ std::string MaterialEditor::GetVersion() const
 
 void MaterialEditor::Initialize()
 {
-    std::cout << "WE INIT THE MATERIAL" << std::endl;
+    EDITOR_LOG("init of material interface")
     PulseInterfaceAPI::AddFunctionToFileClickedCallbacks(
         [this](const ClickedFileData& data) { this->NewFileClicked(data); }
     );
     
     cam = new Camera();
     materialSelected = MaterialManager::loadMaterial("Materials/StandardLit.mat");
-    materialRenderer = new Entity("MaterialRenderer", PulseEngine::Vector3(0.0f,0.0f,0.0f), Primitive::Cube(), materialSelected);
+    materialRenderer = new Entity("MaterialRenderer", PulseEngine::Vector3(0.0f,0.0f,0.0f), Primitive::Sphere(), materialSelected);
     forRender = new Shader("PulseEngineEditor/shaders/basic.vert",  "PulseEngineEditor/shaders/basic.frag");
+    EDITOR_LOG("end of material interface init")
 }
 
 void MaterialEditor::Shutdown()
@@ -48,6 +49,7 @@ void MaterialEditor::Shutdown()
 
 void MaterialEditor::Render()
 {
+    EDITOR_LOG("Rendering")
     std::vector<Entity*> entitiesToRender;
 
     cam->Position = materialRenderer->GetPosition();
@@ -128,6 +130,7 @@ void MaterialEditor::Render()
     PulseInterfaceAPI::EndChild();
 
     PulseInterfaceAPI::CloseWindow();
+    EDITOR_LOG("end of rendering")
 }
 void MaterialEditor::TextureSelector(const std::string &textureName)
 {
