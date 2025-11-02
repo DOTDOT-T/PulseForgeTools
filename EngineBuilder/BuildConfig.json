@@ -1,0 +1,17 @@
+{
+  "modules": [
+    {
+      "name": "pulseLib.Registery",
+      "dll_target": "pulseLib.Registery",
+      "source_path": "../../PulseEngine/",
+      "include_dirs": [
+        "include",
+        "src"
+      ],
+      "sources": [
+        "src/PulseEngine/core/PulseObject/PulseObject.cpp",
+        "src/PulseEngine/core/GUID/GuidGenerator.cpp"
+      ]
+    }
+  ]
+}
