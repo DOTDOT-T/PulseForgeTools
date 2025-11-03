@@ -1,9 +1,9 @@
 {
   "modules": [
     {
-      "name": "pulseLib.Registery",
-      "dll_target": "pulseLib.Registery",
-      "source_path": "../../PulseEngine/",
+      "name": "PE_Registery",
+      "dll_target": "pulseEngine.Registery",
+      "source_path": "../../PulseEngineSource/",
       "include_dirs": [
         "include",
         "src"
@@ -11,6 +11,19 @@
       "sources": [
         "src/PulseEngine/core/PulseObject/PulseObject.cpp",
         "src/PulseEngine/core/GUID/GuidGenerator.cpp"
+      ]
+    },
+    {
+      "name": "PE_FileSystem",
+      "dll_target": "pulseEngine.FileSystem",
+      "source_path": "../../PulseEngineSource/",
+      "include_dirs": [
+        "include",
+        "src"
+      ],
+      "sources": [
+        "src/PulseEngine/core/FileManager/FileManager.cpp",
+        "src/PulseEngine/core/FileManager/FileReader/FileReader.cpp"
       ]
     }
   ]

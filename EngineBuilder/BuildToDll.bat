@@ -16,7 +16,5 @@ for %%f in (BuildScript\*.bat) do (
 
 call BuildMainToExe.bat
 
-
-
 echo.
 echo === Build engine dlls finished ===

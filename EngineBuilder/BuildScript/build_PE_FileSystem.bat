@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
-set "DLL_TARGET=pulseLib.Registery"
-set "ENGINE_SOURCE=../../PulseEngine/"
+set "DLL_TARGET=pulseEngine.FileSystem"
+set "ENGINE_SOURCE=../../PulseEngineSource/"
 set "OBJ_DIR=Object"
 set "BUILD_DIR=Build"
 set "LIB_DIR=Lib"
@@ -10,7 +10,7 @@ if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
 if not exist "%LIB_DIR%" mkdir "%LIB_DIR%"
 if not exist "%OBJ_DIR%" mkdir "%OBJ_DIR%"
 
-set "SRC_FILES=%ENGINE_SOURCE%src/PulseEngine/core/PulseObject/PulseObject.cpp %ENGINE_SOURCE%src/PulseEngine/core/GUID/GuidGenerator.cpp"
+set "SRC_FILES=%ENGINE_SOURCE%src/PulseEngine/core/FileManager/FileManager.cpp %ENGINE_SOURCE%src/PulseEngine/core/FileManager/FileReader/FileReader.cpp"
 
 set "OBJ_FILES="
 for %%f in (%SRC_FILES%) do (
@@ -20,7 +20,7 @@ for %%f in (%SRC_FILES%) do (
 
     if not exist "!OBJ_FILE!" (
         echo [NEW] Compilation: %%~nxf
-        g++ -c -g -I"%ENGINE_SOURCE%include" -I"%ENGINE_SOURCE%src" "%%f" -o "!OBJ_FILE!" -DBUILDING_DLL
+        g++ -c -g -I"%ENGINE_SOURCE%include" -I"%ENGINE_SOURCE%src" "%%f" -o "!OBJ_FILE!" -DBUILDING_DLL -DPULSE_WINDOWS
     ) else (
         for %%A in ("%%f") do set "SRC_TIME=%%~tA"
         for %%B in ("!OBJ_FILE!") do set "OBJ_TIME=%%~tB"
@@ -36,7 +36,7 @@ for %%f in (%SRC_FILES%) do (
 echo.
 echo === Linking: %DLL_TARGET%.dll ===
 g++ -shared -Wl,--out-implib,%LIB_DIR%\lib%DLL_TARGET%.a ^
-    -o %BUILD_DIR%\%DLL_TARGET%.dll %OBJ_FILES% ^
+    -o %BUILD_DIR%\%DLL_TARGET%.dll %OBJ_FILES% -DBUILDING_DLL -DPULSE_WINDOWS ^
     -static-libgcc -static-libstdc++
 
 if %errorlevel% neq 0 (
