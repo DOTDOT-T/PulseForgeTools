@@ -1,14 +1,11 @@
 @echo off
 setlocal enabledelayedexpansion
 
-if not exist tests mkdir tests
-
 set "LIBS_FILES="
 for %%f in (Lib\*.a) do (
     set "LIBS_FILES=!LIBS_FILES! -l:%%~nxf"
 )
 
-echo %LIBS_FILES%
 
 rem === Compilation du test ===
 g++ ^
@@ -28,6 +25,7 @@ g++ ^
     -L../../PulseEngineSource/Build -l../../PulseEngineSource/Build/PulseEngineEditor ^
     -LLib %LIBS_FILES% ^
     -DPULSE_WINDOWS -DENGINE_EDITOR -DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS -DIMGUI_IMPL_OPENGL_LOADER_GLAD ^
+    -lglfw3 -lopengl32 -lm -lassimp -lcomdlg32 -lws2_32 -lwinmm -lmswsock ^
     -o Build/Game.exe
 
 if %errorlevel% neq 0 (
