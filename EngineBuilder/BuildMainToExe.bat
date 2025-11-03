@@ -13,6 +13,11 @@ echo %LIBS_FILES%
 rem === Compilation du test ===
 g++ ^
     main.cpp ^
+    ../../PulseEngineSource/include/imgui/imgui_demo.cpp ^
+    ../../PulseEngineSource/include/imgui/imgui_draw.cpp ^
+    ../../PulseEngineSource/include/imgui/imgui_tables.cpp ^
+    ../../PulseEngineSource/include/imgui/imgui_widgets.cpp ^
+    ../../PulseEngineSource/include/imgui/imgui.cpp ^
     ../../PulseEngineSource/include/imgui/backends/imgui_impl_glfw.cpp ^
     ../../PulseEngineSource/include/imgui/backends/imgui_impl_opengl3.cpp ^
     ../../PulseEngineSource/include/imgui-node/imgui_node_editor.cpp ^
