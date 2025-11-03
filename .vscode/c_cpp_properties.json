@@ -14,6 +14,9 @@
             "intelliSenseMode": "windows-gcc-x64",
             "compilerArgs": [
                 ""
+            ],
+            "defines": [
+                "ENGINE_EDITOR"
             ]
         }
     ],
