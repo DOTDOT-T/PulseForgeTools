@@ -42,6 +42,48 @@
       ]
     },
     {
+      "name": "PE_interfaceDependence",
+      "dll_target": "PulseEngine.InterfaceDependence",
+      "source_path": "../../PulseEngineSource/",
+      "include_dirs": [
+        "include",
+        "/",
+        "src",
+        "include/websocketpp",
+        "include/asio",
+        "include/imgui",
+        "include/imgui-node",
+        "external/assimp/include"
+      ],
+      "sources": [
+        "include/imgui/ImGuizmo.cpp",
+        "include/imgui-node/imgui_node_editor.cpp",
+        "include/imgui-node/imgui_node_editor_api.cpp",
+        "include/imgui-node/imgui_canvas.cpp",
+        "include/imgui-node/crude_json.cpp",
+        "include/imgui/imgui_demo.cpp",
+        "include/imgui/imgui_draw.cpp",
+        "include/imgui/imgui_tables.cpp",
+        "include/imgui/imgui_widgets.cpp",
+        "include/imgui/imgui.cpp",
+        "include/imgui/backends/imgui_impl_glfw.cpp",
+        "include/imgui/backends/imgui_impl_opengl3.cpp"
+      ]
+    },
+    {
+      "name": "PE_Renderer",
+      "dll_target": "PulseEngine.Renderer",
+      "source_path": "../../PulseEngineSource/",
+      "include_dirs": [
+        "include",
+        "/",
+        "src"
+      ],
+      "sources": [
+        "src/shader.cpp"
+      ]
+    },
+    {
       "name": "PE_coreBackend",
       "dll_target": "PulseEngine.CoreBackend",
       "source_path": "../../PulseEngineSource/",
@@ -57,8 +99,6 @@
       ],
       "sources": [
         "src/glad.c",
-        "src/PulseEngine/core/GUID/GuidGenerator.cpp",
-        "src/shader.cpp",
         "src/camera.cpp",
         "src/PulseEngine/core/PulseEngineBackend.cpp",
         "src/PulseEngine/core/Inputs/Mouse.cpp",
@@ -70,7 +110,6 @@
         "src/PulseEngine/core/Meshes/primitive/Primitive.cpp",
         "src/PulseEngine/core/GUID/GuidReader.cpp",
         "src/PulseEngine/core/SceneLoader/SceneLoader.cpp",
-        "src/PulseEngine/core/FileManager/FileManager.cpp",
         "src/PulseEngine/core/Lights/DirectionalLight/DirectionalLight.cpp",
         "src/PulseEngine/CustomScripts/ScriptsLoader.cpp",
         "src/PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.cpp",
@@ -97,38 +136,25 @@
         "src/PulseEngine/core/ExecutableManager/PulseExecutable.cpp",
         "src/PulseEngine/core/ExecutableManager/ExecutableCommunication.cpp",
         "src/PulseEngine/API/EntityAPI/EntityApi.cpp",
-        "include/imgui/backends/imgui_impl_glfw.cpp",
-        "include/imgui/backends/imgui_impl_opengl3.cpp",
-        "include/imgui/ImGuizmo.cpp",
-        "include/imgui-node/imgui_node_editor.cpp",
-        "include/imgui-node/imgui_node_editor_api.cpp",
-        "include/imgui-node/imgui_canvas.cpp",
-        "include/imgui-node/crude_json.cpp",
         "src/PulseEngine/core/Network/Request/Request.cpp",
-        "src/PulseEngine/core/FileManager/FileReader/FileReader.cpp",
         "PulseEngineEditor/InterfaceEditor/Account/Account.cpp",
-        "src/PulseEngine/core/Input/InputSystem.cpp",
         "src/PulseEngine/API/MaterialAPI/MaterialApi.cpp",
         "src/PulseEngine/core/Meshes/RenderableMesh.cpp",
         "src/PulseEngine/core/Meshes/StaticMesh.cpp",
         "src/PulseEngine/core/Profiler/Profiler.cpp",
         "src/PulseEngine/core/Profiler/ProfileTimer.cpp",
-        "src/PulseEngine/core/PulseObject/PulseObject.cpp",
         "src/PulseEngine/core/Lights/Lights.cpp",
         "src/PulseEngine/core/SceneManager/SceneManager.cpp",
         "src/PulseEngine/core/SceneManager/SpatialPartition/SpatialPartition.cpp",
         "src/PulseEngine/core/Math/Frustum/Frustum.cpp",
-        "src/PulseEngine/core/SceneManager/SpatialPartition/SimpleSpatial/SimpleSpatial.cpp",
-        "include/imgui/imgui_demo.cpp",
-        "include/imgui/imgui_draw.cpp",
-        "include/imgui/imgui_tables.cpp",
-        "include/imgui/imgui_widgets.cpp",
-        "include/imgui/imgui.cpp"
+        "src/PulseEngine/core/SceneManager/SpatialPartition/SimpleSpatial/SimpleSpatial.cpp"
       ],
       "dependency": [
         "libPulseLib.InputSystem.a",
         "libPulseEngine.Registery.a",
-        "libPulseEngine.FileSystem.a"
+        "libPulseEngine.FileSystem.a",
+        "libPulseEngine.InterfaceDependence.a",
+        "libPulseEngine.Renderer.a"
       ]
     }
   ]

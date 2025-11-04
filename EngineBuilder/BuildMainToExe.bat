@@ -6,6 +6,7 @@ for %%f in (Lib\*.a) do (
     set "LIBS_FILES=!LIBS_FILES! -l:%%~nxf"
 )
 
+echo "used libs in the project : %LIBS_FILES%"
 
 rem === Compilation du test ===
 g++ ^

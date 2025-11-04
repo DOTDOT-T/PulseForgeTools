@@ -30,6 +30,8 @@ int main(int argc, char** argv)
 {
     std::string workingDir;
 
+
+
     if (argc > 1) 
     {
         // Le premier argument après l'exe est le répertoire de travail
