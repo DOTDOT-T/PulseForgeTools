@@ -1,5 +1,7 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal
+
+set "rebuildExe=%1"
 
 rem === Création des dossiers ===
 if not exist "Object" mkdir "Object"
@@ -14,7 +16,9 @@ for %%f in (BuildScript\*.bat) do (
     call "%%f"
 )
 
-call BuildMainToExe.bat
+if "%rebuildExe%"=="rebuildExe" (
+    call BuildMainToExe.bat
+)
 
 echo.
 echo === Build engine dlls finished ===
