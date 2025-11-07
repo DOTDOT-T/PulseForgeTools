@@ -39,7 +39,7 @@ void MaterialEditor::Initialize()
     cam = new Camera();
     materialSelected = MaterialManager::loadMaterial("Materials/StandardLit.mat");
     materialRenderer = new Entity("MaterialRenderer", PulseEngine::Vector3(0.0f,0.0f,0.0f), Primitive::Sphere(), materialSelected);
-    forRender = new Shader("PulseEngineEditor/shaders/basic.vert",  "PulseEngineEditor/shaders/basic.frag");
+    forRender = new Shader("PulseEngineEditor/shaders/basic.vert",  "PulseEngineEditor/shaders/basic.frag", PulseEngineInstance->graphicsAPI);
     EDITOR_LOG("end of material interface init")
 }
 
@@ -141,7 +141,7 @@ void MaterialEditor::TextureSelector(const std::string &textureName)
         {
             if (PulseInterfaceAPI::Selectable(pr.second, true))
             {
-                Texture *albedoTexture = new Texture(pr.second);
+                Texture *albedoTexture = new Texture(pr.second, PulseEngineInstance->graphicsAPI);
                 if (albedoTexture)
                 {
                     materialSelected->SetTexture(textureName, std::shared_ptr<Texture>(albedoTexture));

@@ -61,8 +61,6 @@ void Viewport::SceneRenderer()
         PulseEngineInstance->GetActiveCamera()->ProcessMouseMovement(PulseInterfaceAPI::MouseDelta().x, -PulseInterfaceAPI::MouseDelta().y);
     }
 
-    OpenGLAPI *openGLAPI = dynamic_cast<OpenGLAPI *>(PulseEngineInstance->graphicsAPI);
-
     PulseEngine::Vector2 windowSize = PulseInterfaceAPI::GetActualWindowSize();
     windowSize.x -= 100.0f;
     windowSize.y -= 100.0f;
