@@ -18,6 +18,7 @@
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
 #include "PulseEngine/core/Physics/Collider/BoxCollider.h"
 #include "PulseEngine/core/SceneManager/HierarchyNode.h"
+#include "PulseEngine/core/Entity/Entity.h"
 
 #include "Shader.h"
 #include "camera.h"
@@ -282,39 +283,54 @@ void EntityEditor::Render()
 
 void EntityEditor::SaveEntityToFile()
         {
-            if (selectedEntity)
+            std::function<nlohmann::json(HierarchyNode<RenderableMesh>*)> GetHierarchyJson;
+
+            GetHierarchyJson = [&](HierarchyNode<RenderableMesh>* thisMeshHierarchy) -> nlohmann::json
             {
-                nlohmann::json_abi_v3_12_0::json entityData;
-                entityData["Guid"] = std::to_string(selectedEntity->GetGuid());
-
-                for (const auto &mesh : selectedEntity->GetMeshes())
+                RenderableMesh* mesh = thisMeshHierarchy->item;
+                nlohmann::json meshJson;
+                meshJson["Guid"] = std::to_string(mesh->GetGuid());
+                meshJson["Position"] = {mesh->transform.position.x, mesh->transform.position.y, mesh->transform.position.z};
+                meshJson["Rotation"] = {mesh->transform.rotation.x, mesh->transform.rotation.y, mesh->transform.rotation.z};
+                meshJson["Scale"] = {mesh->transform.scale.x, mesh->transform.scale.y, mesh->transform.scale.z};
+                meshJson["Name"] = mesh->GetName();
+                meshJson["MeshPath"] = mesh->GetName();
+            
+                // Recurse on children
+                for (auto* child : thisMeshHierarchy->children)
                 {
-                    nlohmann::json meshJson;
-                    meshJson["Guid"] = std::to_string(mesh->GetGuid());
-                    meshJson["Position"] = {mesh->transform.position.x, mesh->transform.position.y, mesh->transform.position.z};
-                    meshJson["Rotation"] = {mesh->transform.rotation.x, mesh->transform.rotation.y, mesh->transform.rotation.z};
-                    meshJson["Scale"] = {mesh->transform.scale.x, mesh->transform.scale.y, mesh->transform.scale.z};
-                    meshJson["Name"] = mesh->GetName();
-                    meshJson["MeshPath"] = mesh->GetName();
-                    entityData["Meshes"].push_back(meshJson);
+                    meshJson["Children"].push_back(GetHierarchyJson(child));
                 }
+            
+                return meshJson;
+            };
 
-                for (const auto &script : selectedEntity->GetScripts())
+
+             if (selectedEntity)
+            {
+                nlohmann::json entityData;
+                entityData["Guid"] = std::to_string(selectedEntity->GetGuid());
+            
+                for (auto* mesh : selectedEntity->GetMeshesHierarchy())
+                {
+                    entityData["Meshes"].push_back(GetHierarchyJson(mesh));
+                }
+            
+                for (const auto& script : selectedEntity->GetScripts())
                 {
                     nlohmann::json scriptJson;
                     scriptJson["Name"] = script->GetName();
                     scriptJson["Guid"] = script->GetGUID();
                     entityData["Scripts"].push_back(scriptJson);
                 }
-
+            
                 entityData["Material"] = selectedEntity->GetMaterial()->guid;
-
+            
                 std::string filePath = selectedEntity->GetName();
                 std::ofstream file(filePath);
                 if (file.is_open())
                 {
-                    file << entityData.dump(4); // Pretty print with 4 spaces
-                    file.close();
+                    file << entityData.dump(4);
                     std::cout << "Entity saved to " << filePath << std::endl;
                 }
                 else

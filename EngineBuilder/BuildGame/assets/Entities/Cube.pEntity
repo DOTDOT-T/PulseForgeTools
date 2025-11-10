@@ -1,0 +1,26 @@
+{
+    "Guid": "2775959593915128073",
+    "Material": "8370212365144497518",
+    "Meshes": [
+        {
+            "Guid": "0",
+            "MeshPath": "models/Primitives/primitiveCube.pmesh",
+            "Name": "models/Primitives/primitiveCube.pmesh",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.2,
+                0.2,
+                0.2
+            ]
+        }
+    ]
+}

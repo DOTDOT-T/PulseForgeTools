@@ -1,0 +1,13 @@
+{
+    "13802808601691876641": "models\\DeadTree/bark_brown_02_diff_1k.jpeg",
+    "14513721409606385361": "models\\Shacks/WoodenShack-1_Wooden_Planks_Normal.png",
+    "15342241096338196453": "models\\Terrains/Wet_Soil_Normal_DirectX.png",
+    "1902093281382178233": "Entities/Tiles_068_roughness.png",
+    "2512866485131271173": "models\\Shacks/WoodenShack-1_Wooden_Planks_BaseColor.png",
+    "3307927234471643837": "models\\Terrains/Wet_Soil_Base_Color.png",
+    "4599596705232805042": "models\\DeadTree/bark_brown_02_rough_1k@channels=G.png",
+    "7427673873458875046": "Entities/Tiles_068_basecolor.png",
+    "8117191632407964032": "models\\Terrains/Wet_Soil_Metallic.png",
+    "9333044712081004036": "Entities/Tiles_068_normal.png",
+    "9594540648509278316": "models\\DeadTree/bark_brown_02_nor_gl_1k.png"
+}

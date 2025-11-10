@@ -1,0 +1,26 @@
+{
+    "Guid": "11946251109464402430",
+    "Material": "8370212365144497518",
+    "Meshes": [
+        {
+            "Guid": "7201992888970458919",
+            "MeshPath": "models\\DeadTree/DeadTree.fbx",
+            "Name": "tree",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ]
+}
