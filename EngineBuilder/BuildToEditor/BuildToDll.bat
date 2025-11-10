@@ -7,17 +7,17 @@ rem === Création des dossiers ===
 if not exist "Object" mkdir "Object"
 if not exist "Build" mkdir "Build"
 if not exist "Lib" mkdir "Lib"
-if not exist "BuildScript" mkdir "BuildScript"
+if not exist "BuildScriptEditor" mkdir "BuildScriptEditor"
 
-python GenerateBuildBat.py
+python BuildToEditor/GenerateBuildBat.py
 
-for %%f in (BuildScript\*.bat) do (
+for %%f in (BuildScriptEditor\*.bat) do (
     echo Running %%~nxf...
     call "%%f"
 )
 
 if "%rebuildExe%"=="rebuildExe" (
-    call BuildMainToExe.bat
+    call BuildToEditor/BuildMainToExe.bat
 )
 
 echo.

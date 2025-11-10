@@ -14,8 +14,9 @@
 #include "PulseEngine/core/FileManager/FileManager.h"
 #include "PulseEngine/core/Graphics/IGraphicsApi.h"
 
+#ifdef ENGINE_EDITOR
 #include "PulseEngineEditor/InterfaceEditor/InterfaceEditor.h"
-
+#endif
 
 #include <vector>
 #include <cmath>

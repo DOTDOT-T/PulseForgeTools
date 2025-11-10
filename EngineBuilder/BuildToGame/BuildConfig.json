@@ -1,0 +1,122 @@
+{
+  "modules": [
+    {
+      "name": "PE_Registery",
+      "dll_target": "PulseEngine.Registery",
+      "source_path": "../../PulseEngineSource/",
+      "include_dirs": [
+        "include",
+        "src"
+      ],
+      "sources": [
+        "src/PulseEngine/core/PulseObject/PulseObject.cpp",
+        "src/PulseEngine/core/GUID/GuidGenerator.cpp"
+      ]
+    },
+    {
+      "name": "PE_FileSystem",
+      "dll_target": "PulseEngine.FileSystem",
+      "source_path": "../../PulseEngineSource/",
+      "include_dirs": [
+        "include",
+        "src"
+      ],
+      "sources": [
+        "src/PulseEngine/core/FileManager/FileManager.cpp",
+        "src/PulseEngine/core/FileManager/FileReader/FileReader.cpp"
+      ]
+    },
+    {
+      "name": "PL_InputsSystem",
+      "dll_target": "PulseLib.InputSystem",
+      "source_path": "../../PulseEngineSource/",
+      "include_dirs": [
+        "include",
+        "src"
+      ],
+      "sources": [
+        "src/PulseEngine/core/Input/InputSystem.cpp"
+      ],
+      "dependency": [
+        "libPulseEngine.FileSystem.a"
+      ]
+    },
+    {
+      "name": "PE_Renderer",
+      "dll_target": "PulseEngine.Renderer",
+      "source_path": "../../PulseEngineSource/",
+      "include_dirs": [
+        "include",
+        "/",
+        "src"
+      ],
+      "sources": [
+        "src/shader.cpp"
+      ]
+    },
+    {
+      "name": "PE_coreBackend",
+      "dll_target": "PulseEngine.CoreBackend",
+      "source_path": "../../PulseEngineSource/",
+      "include_dirs": [
+        "include",
+        "/",
+        "src",
+        "include/websocketpp",
+        "include/asio",
+        "external/assimp/include"
+      ],
+      "sources": [
+        "src/glad.c",
+        "src/camera.cpp",
+        "src/PulseEngine/core/PulseEngineBackend.cpp",
+        "src/PulseEngine/core/Inputs/Mouse.cpp",
+        "src/PulseEngine/core/Entity/Entity.cpp",
+        "src/PulseEngine/core/Meshes/mesh.cpp",
+        "src/PulseEngine/core/WindowContext/WindowContext.cpp",
+        "src/PulseEngine/core/Material/Material.cpp",
+        "src/PulseEngine/core/Material/MaterialManager.cpp",
+        "src/PulseEngine/core/Meshes/primitive/Primitive.cpp",
+        "src/PulseEngine/core/GUID/GuidReader.cpp",
+        "src/PulseEngine/core/SceneLoader/SceneLoader.cpp",
+        "src/PulseEngine/core/Lights/DirectionalLight/DirectionalLight.cpp",
+        "src/PulseEngine/CustomScripts/ScriptsLoader.cpp",
+        "src/PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.cpp",
+        "src/PulseEngine/core/Physics/Collider/BoxCollider.cpp",
+        "src/PulseEngine/core/Meshes/SkeletalMesh.cpp",
+        "src/PulseEngine/core/Lights/PointLight/PointLight.cpp",
+        "src/PulseEngine/core/Material/Texture.cpp",
+        "src/PulseEngine/core/Lights/LightManager.cpp",
+        "src/PulseEngine/core/Physics/CollisionManager.cpp",
+        "src/PulseEngine/core/coroutine/CoroutineManager.cpp",
+        "src/PulseEngine/ModuleLoader/ModuleLoader.cpp",
+        "src/PulseEngine/API/EngineApi.cpp",
+        "src/PulseEngine/API/GameEntity.cpp",
+        "src/PulseEngine/core/Math/Transform/Transform.cpp",
+        "src/PulseEngine/core/GUID/GuidCollection.cpp",
+        "src/PulseEngine/core/ExecutableManager/ExecutableLauncher.cpp",
+        "src/PulseEngine/core/ExecutableManager/PulseExecutable.cpp",
+        "src/PulseEngine/core/ExecutableManager/ExecutableCommunication.cpp",
+        "src/PulseEngine/API/EntityAPI/EntityApi.cpp",
+        "src/PulseEngine/core/Network/Request/Request.cpp",
+        "PulseEngineEditor/InterfaceEditor/Account/Account.cpp",
+        "src/PulseEngine/API/MaterialAPI/MaterialApi.cpp",
+        "src/PulseEngine/core/Meshes/RenderableMesh.cpp",
+        "src/PulseEngine/core/Meshes/StaticMesh.cpp",
+        "src/PulseEngine/core/Profiler/Profiler.cpp",
+        "src/PulseEngine/core/Profiler/ProfileTimer.cpp",
+        "src/PulseEngine/core/Lights/Lights.cpp",
+        "src/PulseEngine/core/SceneManager/SceneManager.cpp",
+        "src/PulseEngine/core/SceneManager/SpatialPartition/SpatialPartition.cpp",
+        "src/PulseEngine/core/Math/Frustum/Frustum.cpp",
+        "src/PulseEngine/core/SceneManager/SpatialPartition/SimpleSpatial/SimpleSpatial.cpp"
+      ],
+      "dependency": [
+        "libPulseLib.InputSystem.a",
+        "libPulseEngine.Registery.a",
+        "libPulseEngine.FileSystem.a",
+        "libPulseEngine.Renderer.a"
+      ]
+    }
+  ]
+}
