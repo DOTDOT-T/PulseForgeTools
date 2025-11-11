@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 
-set CPP_TARGET="EntityEditor"
+set CPP_TARGET="Viewport"
 
 g++ -DBUILDING_DLL -DENGINE_EDITOR -DPULSE_WINDOWS -DPULSE_GRAPHIC_OPENGL -DIMGUI_IMPL_OPENGL_LOADER_GLAD  -fvisibility=default ^
 -shared -I./src -I. -I./PulseEngineEditor -I./include -Iinclude/asio -Iinclude/websocketpp -Iinclude -Iinclude/imgui -Iinclude/imgui-node ^
