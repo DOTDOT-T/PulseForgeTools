@@ -5,21 +5,6 @@
 #include <algorithm>
 #include <Windows.h>
 
-// PULSE_REGISTER_CLASS_CPP(PlayerBehavior)
-
-
-// void Serialize(Archive& ar)
-// {
-
-// }
-// void Deserialize(Archive& ar)
-// {
-
-// }
-// const char* ToString()
-// {
-//     return "player behavior";
-// }
 
 extern "C" __declspec(dllexport) IScript* PulseScriptPlayerBehavior()
 {
@@ -28,6 +13,7 @@ extern "C" __declspec(dllexport) IScript* PulseScriptPlayerBehavior()
 
 void PlayerBehavior::OnStart()
 {
+
     inputSystem = PulseEngineInstance->inputSystem;
     camera = PulseEngineInstance->GetActiveCamera();
 
@@ -87,82 +73,13 @@ void PlayerBehavior::UpdateLights(float dt)
 
 void PlayerBehavior::HandleMovement(float dt)
 {
-    // rotations de base du propriétaire
-    PulseEngine::Vector3 rot = owner->GetRotation();
+    BoxCollider* bx =owner->GetComponent<BoxCollider>();
 
-    // compute forward from pitch/yaw like original (cache cos/sin)
-    float cosPitch = cos(MathUtils::ToRadians(rot.x));
-    float sinPitch = sin(MathUtils::ToRadians(rot.x));
-    float cosYaw   = cos(MathUtils::ToRadians(rot.y));
-    float sinYaw   = sin(MathUtils::ToRadians(rot.y));
+    if(inputSystem->isActionDown(0)) bx->velocity -= owner->GetTransform()->GetForward();
+    if(inputSystem->isActionDown(1)) bx->velocity += owner->GetTransform()->GetForward();
+    if(inputSystem->isActionDown(2)) owner->GetTransform()->AddWorldRotation(PulseEngine::Vector3(0.0f, 45.0f * dt, 0.0f));
+    if(inputSystem->isActionDown(3)) owner->GetTransform()->AddWorldRotation(PulseEngine::Vector3(0.0f, -45.0f * dt, 0.0f));    
 
-    PulseEngine::Vector3 forward(
-        cosPitch * sinYaw,
-        -sinPitch,
-        cosPitch * cosYaw
-    );
-    forward = forward.Normalized();
-
-    // determine movement input
-    PulseEngine::Vector3 inputDir(0.0f);
-    bool back = inputSystem->isActionDown(0);
-    bool forwardKey = inputSystem->isActionDown(1);
-    bool turnRight = inputSystem->isActionDown(2);
-    bool turnLeft  = inputSystem->isActionDown(3);
-
-    if (back)  inputDir -= forward;
-    if (forwardKey) inputDir += forward;
-
-    // rotation input (yaw)
-    if (turnRight) owner->SetRotation(owner->GetRotation() + PulseEngine::Vector3(0.0f, turnSpeedDeg * dt, 0.0f));
-    if (turnLeft)  owner->SetRotation(owner->GetRotation() - PulseEngine::Vector3(0.0f, turnSpeedDeg * dt, 0.0f));
-
-    // --- SPEED MANAGEMENT WITH SMOOTH DIRECTION SWITCHING ---
-    float targetSpeed = 0.0f;
-    PulseEngine::Vector3 targetDir = lastForward;
-
-    if (inputDir.GetMagnitude() > 0.0f)
-    {
-        targetDir = inputDir.Normalized();
-        targetSpeed = maxSpeed;
-    }
-
-    // dot product to detect direction conflict (opposite input)
-    float dirDot = lastForward.Dot(targetDir);
-
-    if (dirDot < 0.0f && currentSpeed > 0.1f)
-    {
-        // opposite direction: brake first until stop
-        currentSpeed = std::max(0.0f, currentSpeed - deceleration * dt);
-    }
-    else
-    {
-        // accelerate or decelerate normally
-        if (targetSpeed > currentSpeed)
-            currentSpeed = std::min(targetSpeed, currentSpeed + acceleration * dt);
-        else
-            currentSpeed = std::max(targetSpeed, currentSpeed - deceleration * dt);
-
-        // only update forward vector once almost aligned or moving
-        if (inputDir.GetMagnitude() > 0.0f)
-            lastForward = targetDir;
-    }
-
-
-    // apply movement
-    PulseEngine::Vector3 move = lastForward * currentSpeed * dt;
-    owner->GetTransform()->position += move;
-
-    // wheel visuals
-    ApplyWheelRotation(currentSpeed * wheelSpinSpeed, dt);
-
-    float dir = 0.0f;
-    if (inputSystem->isActionDown(0)) dir = 1.0f;
-    if (inputSystem->isActionDown(1)) dir = -1.0f;
-    float tiltValue = move.GetMagnitude() * dir * 5.0f;
-    chassisMesh->transform.rotation.x = tiltValue;
-    turretMesh->transform.rotation.x = tiltValue; 
-    // cannonMesh->transform.rotation.x += tiltValue; // simple pitch effect based on speed
 }
 
 void PlayerBehavior::ApplyWheelRotation(float wheelSpeed, float dt)
@@ -192,41 +109,23 @@ float PlayerBehavior::AngleDiff(float target, float current)
 
 void PlayerBehavior::HandleTurret(float dt)
 {
-    if (!turretMesh) turretMesh = owner->GetMeshContainingName("turret");
-    if (!cannonMesh) cannonMesh = owner->GetMeshContainingName("cannon");
-    if (!turretMesh) return;
+    PulseEngine::Vector3 fwd = owner->GetTransform()->GetForward();
 
-    // compute yaw to camera (world-space direction on XZ)
-    PulseEngine::Vector3 toCam = (camera->Position - owner->GetPosition());
-    toCam.y = 0.0f;
-    toCam = toCam.Normalized();
+    float ownerYaw = atan2(fwd.x,
+                         fwd.z) * 180.0f / 3.14159265f;
 
-    float targetYaw = atan2(toCam.x, toCam.z) * (180.0f / 3.14159265f);
+    float camYaw = atan2(PulseEngineInstance->GetActiveCamera()->Front.x,
+                         PulseEngineInstance->GetActiveCamera()->Front.z) * 180.0f / 3.14159265f - 180.0f;
 
-    // current turret yaw is relative to owner rotation; combine to compute world yaw
-    float currentTurretYaw = turretMesh->transform.rotation.y + owner->GetRotation().y;
-    float yawDiff = AngleDiff(targetYaw, currentTurretYaw);
-    float step = yawDiff * Clamp(turretSmooth * dt, 0.0f, 1.0f);
-
-    // rotate both turret and cannon consistently (local rotation)
-    turretMesh->transform.rotation.y += step;
+    turretMesh->transform.rotation.y = camYaw - ownerYaw;
     if (cannonMesh)
     {
-        // cannonMesh->transform.rotation.y = turretMesh->transform.rotation.y;
-        // set cannon local position and pitch based on camera pitch
-        float yawRad = MathUtils::ToRadians(turretMesh->transform.rotation.y);
-        PulseEngine::Vector3 forward;
-        forward.x = sin(yawRad);
-        forward.y = 0.0f;
-        forward.z = cos(yawRad);
-        forward = forward.Normalized();
-
-        cannonMesh->transform.position.y = 0.94f;
-
-        // clamp camera pitch and apply offset
         float camPitch = Clamp(camera->Pitch, -45.0f, 45.0f);
         cannonMesh->transform.rotation.x = camPitch + cannonPitchOffset;
+
+        cannonMesh->transform.position.y = 0.94f;
     }
+    
 }
 
 void PlayerBehavior::HandleCamera(float dt)
@@ -256,28 +155,14 @@ void PlayerBehavior::HandleShooting(float dt)
         // spawn projectile in front of cannon
         if (cannonMesh)
         {
-            // world transform of cannon tip — using position + forward
-            float yawRad = MathUtils::ToRadians(cannonMesh->transform.rotation.y + owner->GetRotation().y);
-            float pitchRad = MathUtils::ToRadians(cannonMesh->transform.rotation.x);
+            PulseEngine::Vector3 spawnPos = cannonMesh->transform.GetWorldPosition() + cannonMesh->transform.GetForward() * -5.0f;
+            Entity* proj = GameEntity::Instantiate("Entities/Cube.pEntity", spawnPos);
+            proj->collider->mass = 50.0f;
+            proj->collider->physicBody = PhysicBody::MOVABLE;
+            proj->collider->SetSize(PulseEngine::Vector3(0.4f,0.4f,0.4f));
+            proj->collider->velocity = cannonMesh->transform.GetForward() * -100.0f;
 
-            PulseEngine::Vector3 dir;
-            dir.x = sin(yawRad) * cos(pitchRad);
-            dir.y = sin(-pitchRad); // depending on convention, adjust sign
-            dir.z = cos(yawRad) * cos(pitchRad);
-            dir = dir.Normalized();
-
-            PulseEngine::Vector3 spawnPos = owner->GetPosition() + cannonMesh->transform.position + dir * 1.5f;
-            
-            // TODO: Replace with your engine's spawn call for a projectile/prefab
-            // Example (pseudo): PulseEngineInstance->SpawnProjectile("ShellPrefab", spawnPos, dir * 45.0f, owner);
-            // If engine uses EntityFactory: owner->GetScene()->CreateEntityFromPrefab(...)
-            
-            // Example pseudo-call (no-op stub): 
-            // PulseEngine::Entity* proj = PulseEngineInstance->CreateProjectile(spawnPos, dir * 60.0f);
-            // proj->SetOwner(owner);
-
-            // feedback: sound/particles (TODO)
-            // PulseEngineInstance->audio->Play("cannon_fire");
+            owner->GetComponent<BoxCollider>()->force += cannonMesh->transform.GetForward() * 5000.0f;
 
             ammo--;
             fireTimer = fireCooldown;

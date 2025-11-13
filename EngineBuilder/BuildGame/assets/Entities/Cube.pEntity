@@ -17,9 +17,29 @@
                 0.0
             ],
             "Scale": [
-                0.2,
-                0.2,
-                0.2
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        {
+            "Guid": "1",
+            "MeshPath": "models/Primitives/primitiveSphere.pmesh",
+            "Name": "models/Primitives/primitiveSphere.pmesh",
+            "Position": [
+                1.909999966621399,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
             ]
         }
     ]

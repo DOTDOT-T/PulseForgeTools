@@ -1,0 +1,11 @@
+{
+    "name": "Shack",
+    "guid": "2860961913881705435",
+    "color": [
+        0.5,
+        0.0,
+        0.0
+    ],
+    "albedo": "models/Shacks/WoodenShack-1_Wooden_Planks_BaseColor.png",
+    "normal": "models/Shacks/WoodenShack-1_Wooden_Planks_Normal.png"
+}

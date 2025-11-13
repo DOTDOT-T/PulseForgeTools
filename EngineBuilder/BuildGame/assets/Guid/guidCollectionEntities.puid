@@ -8,5 +8,6 @@
     "4999045609554485032": "Entities/primitiveCube.pEntity",
     "5208241477410102808": "PulseEngineEditor/Entities/simpleActor.pEntity",
     "5812296483430556745": "Entities\\Shack.pEntity",
-    "7334121461276113549": "Entities\\test.pEntity"
+    "7334121461276113549": "Entities\\test.pEntity",
+    "9960138886760304250": "Entities\\EnnemyTank_Casual.pEntity"
 }

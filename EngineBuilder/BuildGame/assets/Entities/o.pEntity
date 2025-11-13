@@ -189,8 +189,11 @@
     ],
     "Scripts": [
         {
-            "Guid": 5792590801429553860,
-            "isEntityLinked":true,
+            "Guid": 0,
+            "Name": "BoxCollider"
+        },
+        {
+            "Guid": 7362384091831204666,
             "Name": "PulseScriptPlayerBehavior"
         }
     ]

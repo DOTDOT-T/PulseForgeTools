@@ -1,0 +1,13 @@
+{
+    "name": "DeadTree",
+"guid": "5501014314576175647",
+    "albedo": "bark_brown_02_diff_1k.jpeg",
+    "color": [
+        0.5,
+        0.0,
+        0.0
+    ],
+    "normal": "bark_brown_02_nor_gl_1k.png",
+    "roughness": "bark_brown_02_rough_1k@channels=G.png",
+    "specular": 10.0
+}

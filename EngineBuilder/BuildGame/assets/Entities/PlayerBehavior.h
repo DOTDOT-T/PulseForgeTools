@@ -58,7 +58,7 @@ private:
 
     // turret / aim
     float turretSmooth = 8.0f;      // higher = snappier
-    float cannonPitchOffset = 20.0f;
+    float cannonPitchOffset = 10.0f;
 
     // shooting
     float fireCooldown = 0.25f;

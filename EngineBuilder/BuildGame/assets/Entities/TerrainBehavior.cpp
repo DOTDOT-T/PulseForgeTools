@@ -6,7 +6,7 @@ void TerrainBehavior::OnStart()
 {
     BoxCollider* bx = owner->GetComponent<BoxCollider>();
     bx->mass = 9999.0f;
-    bx->SetSize(PulseEngine::Vector3(40.0f,0.02f,40.0f));
+    bx->SetSize(PulseEngine::Vector3(80.0f,0.02f,80.0f));
 }
 
 void TerrainBehavior::OnUpdate()
