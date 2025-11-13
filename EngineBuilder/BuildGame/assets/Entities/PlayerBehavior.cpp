@@ -35,7 +35,6 @@ void PlayerBehavior::OnStart()
 
     bx->SetSize(PulseEngine::Vector3(4.0f, 2.0f, 6.0f));
     bx->mass = 250.0f;
-    owner->SetPosition(PulseEngine::Vector3(0.0f,10.0f,0.0f));
 }
 
 void PlayerBehavior::OnUpdate()

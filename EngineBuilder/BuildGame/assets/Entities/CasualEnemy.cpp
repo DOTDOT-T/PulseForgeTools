@@ -16,7 +16,11 @@ void CasualEnemy::OnStart()
 
 void CasualEnemy::OnUpdate()
 {
-    physicComponent->velocity += (targetEntity->GetPosition() - owner->GetPosition()).Normalized() * 10.0f;
+    if((targetEntity->GetPosition() - owner->GetPosition()).GetMagnitude() > 10.0f)
+        physicComponent->velocity += (targetEntity->GetPosition() - owner->GetPosition()).Normalized() * 0.2f;
+    else
+        physicComponent->velocity += (targetEntity->GetPosition() - owner->GetPosition()).Normalized() * 0.2f;
+
     physicComponent->physicBody = PhysicBody::MOVABLE;
 }
 
