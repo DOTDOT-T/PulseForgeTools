@@ -105,7 +105,7 @@ goto :eof
 
 """
 
-    out_file = f"BuildScript/{idx_str}_{name}.bat"
+    out_file = f"BuildScriptEditor/{idx_str}_{name}.bat"
     os.makedirs(os.path.dirname(out_file), exist_ok=True)
     with open(out_file, "w", encoding="utf-8") as out:
         out.write(content)

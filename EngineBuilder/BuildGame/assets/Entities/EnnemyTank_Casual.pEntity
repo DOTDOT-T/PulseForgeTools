@@ -195,6 +195,10 @@
         {
             "Guid": 11661080717744939645,
             "Name": "PulseScriptCasualEnemy"
+        },
+        {
+            "Guid": 14363881809207757461,
+            "Name": "PulseScriptAiBehavior"
         }
     ]
 }

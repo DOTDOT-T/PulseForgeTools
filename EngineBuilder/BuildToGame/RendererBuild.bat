@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 echo.
 echo === Linking: Renderer.dll ===
 g++ -shared -Wl,--out-implib,../EngineBuilder/Build/Modules\libRenderer.a -o ../EngineBuilder/Build/Modules\Renderer.dll ^
- -DBUILDING_DLL -DPULSE_WINDOWS -DPULSE_GRAPHIC_OPENGL ^
+ -DBUILDING_DLL -DPULSE_WINDOWS -DPULSE_GRAPHIC_OPENGL -DENGINE_EDITOR ^
  ../../PulseEngineSource/src/PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.cpp ^
  ../../PulseEngineSource/src/glad.c ^
  -I"../../PulseEngineSource/include" -I"../../PulseEngineSource/" -I"../../PulseEngineSource/src" -I"../../PulseEngineSource/include/websocketpp" -I"../../PulseEngineSource/include/asio" -I"../../PulseEngineSource/external/assimp/include" ^

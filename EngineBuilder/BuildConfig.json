@@ -147,7 +147,8 @@
         "src/PulseEngine/core/SceneManager/SceneManager.cpp",
         "src/PulseEngine/core/SceneManager/SpatialPartition/SpatialPartition.cpp",
         "src/PulseEngine/core/Math/Frustum/Frustum.cpp",
-        "src/PulseEngine/core/SceneManager/SpatialPartition/SimpleSpatial/SimpleSpatial.cpp"
+        "src/PulseEngine/core/SceneManager/SpatialPartition/SimpleSpatial/SimpleSpatial.cpp",
+        "src/PulseEngine/core/Physics/Cast/Casting.cpp"
       ],
       "dependency": [
         "libPulseLib.InputSystem.a",
