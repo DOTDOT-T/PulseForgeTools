@@ -95,7 +95,8 @@
         "include/asio",
         "include/imgui",
         "include/imgui-node",
-        "external/assimp/include"
+        "external/assimp/include",
+        "src/PulseEngine/core/PulseScript/"
       ],
       "sources": [
         "src/glad.c",
@@ -148,7 +149,13 @@
         "src/PulseEngine/core/SceneManager/SpatialPartition/SpatialPartition.cpp",
         "src/PulseEngine/core/Math/Frustum/Frustum.cpp",
         "src/PulseEngine/core/SceneManager/SpatialPartition/SimpleSpatial/SimpleSpatial.cpp",
-        "src/PulseEngine/core/Physics/Cast/Casting.cpp"
+        "src/PulseEngine/core/Physics/Cast/Casting.cpp",
+        "src/PulseEngine/core/PulseScript/PulseInterpreter.cpp",
+        "src/PulseEngine/core/PulseScript/PulseLexer.cpp",
+        "src/PulseEngine/core/PulseScript/PulseParser.cpp",
+        "src/PulseEngine/core/PulseScript/PulseScript.cpp",  
+        "src/PulseEngine/core/PulseScript/PulseScriptsManager.cpp",
+        "src/PulseEngine/core/PulseScript/NativeInit.cpp"
       ],
       "dependency": [
         "libPulseLib.InputSystem.a",
