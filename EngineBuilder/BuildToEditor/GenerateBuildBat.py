@@ -32,8 +32,8 @@ if not exist "%LIB_DIR%" mkdir "%LIB_DIR%"
 if not exist "%OBJ_DIR%" mkdir "%OBJ_DIR%"
 
 :: Compiler flags
-set "CFLAGS=-std=c++20 -c -g -DBUILDING_DLL -DPULSE_WINDOWS -DPULSE_GRAPHIC_OPENGL -DENGINE_EDITOR"
-set "FLAGS=-std=c++20 -g -DBUILDING_DLL -DPULSE_WINDOWS -DPULSE_GRAPHIC_OPENGL -DENGINE_EDITOR"
+set "CFLAGS=-std=c++20 -c -g -DBUILDING_DLL -DPULSE_WINDOWS -DPULSE_GRAPHIC_OPENGL -DENGINE_EDITOR -DZEP_FEATURE_CPP_FILE_SYSTEM"
+set "FLAGS=-std=c++20 -g -DBUILDING_DLL -DPULSE_WINDOWS -DPULSE_GRAPHIC_OPENGL -DENGINE_EDITOR -DZEP_FEATURE_CPP_FILE_SYSTEM"
 set "INCLUDES={includes}"
 set "LIBS=-Llib {dependency_libs} -LC:/msys64/mingw64/bin -lglfw3 -lopengl32 -lm -lassimp -lcomdlg32 -lws2_32 -lwinmm -lmswsock"
 
