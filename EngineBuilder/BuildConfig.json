@@ -183,7 +183,8 @@
         "src/PulseEngine/core/PulseScript/PulseParser.cpp",
         "src/PulseEngine/core/PulseScript/PulseScript.cpp",  
         "src/PulseEngine/core/PulseScript/PulseScriptsManager.cpp",
-        "src/PulseEngine/core/PulseScript/NativeInit.cpp"
+        "src/PulseEngine/core/PulseScript/NativeInit.cpp",
+        "src/PulseEngine/core/JobSystem/JobSystem.cpp"
       ],
       "dependency": [
         "libPulseLib.InputSystem.a",
