@@ -23,7 +23,6 @@ g++ ^
     ../../PulseEngineSource/include/imgui-node/imgui_canvas.cpp ^
     ../../PulseEngineSource/include/imgui-node/crude_json.cpp ^
     -I../../PulseEngineSource/src -I../../PulseEngineSource/include -I../../PulseEngineSource/. -I../../PulseEngineSource/include/imgui -I../../PulseEngineSource/include/imgui-node -I../../PulseEngineSource/imgui/backends ^
-    -L../../PulseEngineSource/Build -l../../PulseEngineSource/Build/PulseEngineEditor ^
     -LLib %LIBS_FILES% ^
     -DPULSE_WINDOWS -DENGINE_EDITOR -DPULSE_GRAPHIC_OPENGL -DPULSE_WINDOWS -DIMGUI_IMPL_OPENGL_LOADER_GLAD ^
     -lglfw3 -lopengl32 -lm -lassimp -lcomdlg32 -lws2_32 -lwinmm -lmswsock ^

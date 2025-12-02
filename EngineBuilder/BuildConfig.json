@@ -141,7 +141,6 @@
         "src/PulseEngine/core/SceneLoader/SceneLoader.cpp",
         "src/PulseEngine/core/Lights/DirectionalLight/DirectionalLight.cpp",
         "src/PulseEngine/CustomScripts/ScriptsLoader.cpp",
-        "src/PulseEngine/core/Graphics/OpenGLAPI/OpenGLApi.cpp",
         "src/PulseEngine/core/Physics/Collider/BoxCollider.cpp",
         "src/PulseEngine/core/Meshes/SkeletalMesh.cpp",
         "PulseEngineEditor/InterfaceEditor/InterfaceEditor.cpp",
@@ -184,7 +183,12 @@
         "src/PulseEngine/core/PulseScript/PulseScript.cpp",  
         "src/PulseEngine/core/PulseScript/PulseScriptsManager.cpp",
         "src/PulseEngine/core/PulseScript/NativeInit.cpp",
-        "src/PulseEngine/core/JobSystem/JobSystem.cpp"
+        "src/PulseEngine/core/Gamemode/Gamemode.cpp",
+        "src/PulseEngine/core/Gamemode/HudController/Widget.cpp",
+        "src/PulseEngine/core/Gamemode/HudController/HudController.cpp",
+        "src/PulseEngine/core/Gamemode/HudController/WidgetComponent/WidgetComponent.cpp",
+        "src/PulseEngine/core/Gamemode/HudController/WidgetComponent/TextComponent/TextComponent.cpp",
+        "PulseEngineEditor/InterfaceEditor/WidgetEditor/WidgetEditor.cpp"
       ],
       "dependency": [
         "libPulseLib.InputSystem.a",
