@@ -24,7 +24,6 @@ int main(int argc, char** argv)
         std::string engineExe = js["enginePath"];
         std::string projectDir = js["projectDir"];
         launcher.StartLaunchCountdown(
-            js["projectName"],
             js["enginePath"],
             js["projectDir"]
         );

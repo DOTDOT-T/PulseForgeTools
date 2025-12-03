@@ -1,90 +1,41 @@
 #include "Launcher/PulseLauncher.h"
-#include <imgui/imgui.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
-#include <cstdio>
-#include <string>
-#include <windows.h>
-
-static void glfw_error_callback(int error, const char* description)
-{
-    fprintf(stderr, "GLFW Error %d: %s\n", error, description);
-}
-
-std::wstring ToWide(const std::string& str)
-{
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(),
-                                          (int)str.size(), nullptr, 0);
-    std::wstring wstr(size_needed, 0);
-    MultiByteToWideChar(CP_UTF8, 0, str.c_str(),
-                        (int)str.size(), &wstr[0], size_needed);
-    return wstr;
-}
-
-
-bool LaunchEngineProcess(const std::string& engineExe,
-                         const std::string& projectDir)
-{
-    std::wstring wEngine = ToWide(engineExe);
-    std::wstring wArgs = L"\"" + ToWide(engineExe) + L"\" \"" + ToWide(projectDir) + L"\"";
-
-    STARTUPINFOW si{};
-    PROCESS_INFORMATION pi{};
-    si.cb = sizeof(si);
-
-    BOOL ok = CreateProcessW(
-        wEngine.c_str(),     // Application
-        &wArgs[0],           // Arguments (modifiable buffer)
-        nullptr,
-        nullptr,
-        FALSE,
-        CREATE_NEW_CONSOLE,  // ou 0 pour silencieux
-        nullptr,
-        nullptr,
-        &si,
-        &pi
-    );
-
-    if (!ok)
-    {
-        DWORD err = GetLastError();
-        printf("CreateProcessW failed: %lu\n", err);
-        return false;
-    }
-
-    // On peut fermer les handles (l'engine vit tout seul)
-    CloseHandle(pi.hProcess);
-    CloseHandle(pi.hThread);
-
-    return true;
-}
-
 
 PulseLauncher::PulseLauncher()
-    : window(nullptr)
 {
+    // Hide console
+    HWND hwndConsole = GetConsoleWindow();
+    if (hwndConsole)
+        ShowWindow(hwndConsole, SW_HIDE);
+
     // GLFW init
-    glfwSetErrorCallback(glfw_error_callback);
+    glfwSetErrorCallback([](int error, const char* desc){ fprintf(stderr, "GLFW Error %d: %s\n", error, desc); });
     if (!glfwInit()) return;
 
-    // Window hints
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    window = glfwCreateWindow(1280, 720, "Pulse Launcher", nullptr, nullptr);
+    int win_w = 1200;
+    int win_h = 600;
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    win_x = (mode->width - win_w) / 2;
+    win_y = (mode->height - win_h) / 2;
+
+    window = glfwCreateWindow(win_w, win_h, "Pulse Launcher", nullptr, nullptr);
     if (!window)
     {
         glfwTerminate();
         return;
     }
 
+    glfwSetWindowPos(window, win_x, win_y);
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // V-Sync
+    glfwSwapInterval(1);
 
-    // Load OpenGL functions
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         glfwDestroyWindow(window);
@@ -93,36 +44,20 @@ PulseLauncher::PulseLauncher()
         return;
     }
 
-    // ImGui context
+    // ImGui init
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
+    io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
-    // Dark theme style
+    // Dark theme
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowRounding = 6.0f;
     style.FrameRounding = 4.0f;
-    style.ChildRounding = 6.0f;
-    style.GrabRounding = 4.0f;
-    style.ScrollbarRounding = 4.0f;
-
-    ImVec4* colors = style.Colors;
-    colors[ImGuiCol_Text] = ImVec4(0.95f, 0.96f, 0.98f, 1.00f);
-    colors[ImGuiCol_WindowBg] = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
-    colors[ImGuiCol_FrameBg] = ImVec4(0.20f, 0.20f, 0.22f, 1.00f);
-    colors[ImGuiCol_FrameBgHovered] = ImVec4(0.25f, 0.25f, 0.27f, 1.00f);
-    colors[ImGuiCol_FrameBgActive] = ImVec4(0.15f, 0.15f, 0.18f, 1.00f);
-    colors[ImGuiCol_TitleBg] = ImVec4(0.08f, 0.08f, 0.09f, 1.00f);
-    colors[ImGuiCol_TitleBgActive] = ImVec4(0.10f, 0.10f, 0.12f, 1.00f);
-    colors[ImGuiCol_Button] = ImVec4(0.20f, 0.50f, 0.80f, 1.00f);
-    colors[ImGuiCol_ButtonHovered] = ImVec4(0.25f, 0.60f, 0.95f, 1.00f);
-    colors[ImGuiCol_ButtonActive] = ImVec4(0.15f, 0.45f, 0.75f, 1.00f);
+    style.Colors[ImGuiCol_WindowBg] = ImVec4(0.08f,0.08f,0.09f,1.0f);
+    style.Colors[ImGuiCol_Text] = ImVec4(0.95f,0.96f,0.98f,1.0f);
 }
 
 PulseLauncher::~PulseLauncher()
@@ -130,92 +65,162 @@ PulseLauncher::~PulseLauncher()
     CleanupLauncher();
 }
 
-GLFWwindow* PulseLauncher::GetWindow() const
+GLFWwindow* PulseLauncher::GetWindow() const { return window; }
+
+void PulseLauncher::StartLaunchCountdown(const std::string& engineExe, const std::string& projectDir)
 {
-    return window;
+    launching = true;
+    std::thread([this, engineExe, projectDir]() { LaunchEngine(engineExe, projectDir); }).detach();
+}
+
+void PulseLauncher::LaunchEngine(const std::string& engineExe, const std::string& projectDir)
+{
+    SECURITY_ATTRIBUTES sa{ sizeof(sa), nullptr, TRUE };
+    CreatePipe(&hReadPipe, &hWritePipe, &sa, 0);
+    SetHandleInformation(hReadPipe, HANDLE_FLAG_INHERIT, 0);
+
+    STARTUPINFOW si{};
+    si.cb = sizeof(si);
+    si.hStdOutput = hWritePipe;
+    si.hStdError  = hWritePipe;
+    si.dwFlags |= STARTF_USESTDHANDLES;
+
+    std::wstring wExe(engineExe.begin(), engineExe.end());
+    std::wstring wArgs = L"\"" + wExe + L"\" \"" + std::wstring(projectDir.begin(), projectDir.end()) + L"\"";
+
+    if (!CreateProcessW(
+        wExe.c_str(),
+        &wArgs[0],
+        nullptr, nullptr,
+        TRUE,
+        CREATE_NEW_CONSOLE,
+        nullptr, nullptr,
+        &si,
+        &pi))
+    {
+        DWORD err = GetLastError();
+        std::lock_guard<std::mutex> lock(mtx);
+        messages.push("Failed to launch engine: " + std::to_string(err));
+        return;
+    }
+
+    CloseHandle(hWritePipe);
+    
+    // Poll engine stdout
+    PollEngineMessages();
+}
+
+void PulseLauncher::PollEngineMessages()
+{
+    char buffer[256];
+    DWORD bytesRead = 0;
+    std::string line;
+
+    while (true)
+    {
+        if (!ReadFile(hReadPipe, buffer, sizeof(buffer)-1, &bytesRead, nullptr) || bytesRead == 0)
+            break;
+
+        buffer[bytesRead] = 0;
+        line += buffer;
+
+        size_t pos;
+        while ((pos = line.find('\n')) != std::string::npos)
+        {
+            std::string msg = line.substr(0,pos);
+            line.erase(0,pos+1);
+
+            std::lock_guard<std::mutex> lock(mtx);
+            messages.push(msg);
+
+            if (msg.find("Finished the initialization of the engine.") != std::string::npos)
+            {
+                // glfwSetWindowShouldClose(window, true);
+                progressValue = 1.0;
+                return;
+            }
+        }
+    }
 }
 
 void PulseLauncher::UpdateLauncher()
 {
     if (window)
         glfwPollEvents();
+
+    std::lock_guard<std::mutex> lock(mtx);
+    while (!messages.empty())
+    {
+        std::string msg = messages.front();
+        messages.pop();
+
+        statusText = msg;
+        logMessages.push_back(msg);
+
+        if (logMessages.size() > 5000)
+            logMessages.pop_front();
+    }
 }
 
 void PulseLauncher::RenderLauncher()
 {
     if (!window) return;
 
-    int display_w, display_h;
-    glfwGetFramebufferSize(window, &display_w, &display_h);
+    int w, h;
+    glfwGetFramebufferSize(window, &w, &h);
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    // --- Splash screen countdown ---
-    if (launching)
+    LoadingWindow(w * 0.25f, h);
+
+    ImGui::SetNextWindowSize(ImVec2((float)w * 0.75f, (float)h));
+    ImGui::SetNextWindowPos(ImVec2((float)w * 0.25f, 0));
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_HorizontalScrollbar;
+    
+    ImGui::Begin("Console Log", nullptr, flags);
+    ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
+    
+    for (const auto& line : logMessages)
     {
-        float elapsed = std::chrono::duration<float>(
-            std::chrono::steady_clock::now() - launchStartTime
-        ).count();
-
-        ImGui::SetNextWindowSize(ImVec2(display_w, display_h));
-        ImGui::SetNextWindowPos(ImVec2(0, 0));
-
-        ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration |
-                                 ImGuiWindowFlags_NoMove |
-                                 ImGuiWindowFlags_NoInputs;
-
-        ImGui::Begin("Splash", nullptr, flags);
-
-        ImGui::SetCursorPos(ImVec2(display_w * 0.35f, display_h * 0.40f));
-        ImGui::Text("Loading Project...");
-        
-        ImGui::SetCursorPos(ImVec2(display_w * 0.35f, display_h * 0.48f));
-        ImGui::Text("%s", projectName.c_str());
-
-        // Fake progress bar
-        float progress = elapsed / 3.0f;
-        if (progress > 1.0f) progress = 1.0f;
-
-        ImGui::SetCursorPos(ImVec2(display_w * 0.25f, display_h * 0.60f));
-        ImGui::ProgressBar(progress, ImVec2(display_w * 0.50f, 30));
-
-        ImGui::End();
-
-        // After 3 seconds → launch engine
-        if (elapsed >= 3.0f)
-        {
-            LaunchEngineProcess(enginePath, projectPath);
-            glfwSetWindowShouldClose(window, true);
-        }
+        ImVec4 color = line.find("[ERROR]") != std::string::npos ? ImVec4(1.0,0.0,0.0,1.0) : line.find("[INFO]") != std::string::npos ? ImVec4(0.0, 0.5, 1.0, 1.0) : line.find("[WARN]") != std::string::npos ? ImVec4(1.0,1.0,0.0,1.0) : ImVec4(1.0,1.0,1.0, 1.0);
+        ImGui::PushStyleColor(ImGuiCol_Text, color);
+        ImGui::TextUnformatted(line.c_str());
+        ImGui::PopStyleColor();
     }
-    else
-    {
-        // --- Normal launcher view ---
-        ImGui::Begin("Pulse Launcher");
-        ImGui::Text("Waiting for project...");
-        ImGui::End();
-    }
+    
+    if (autoScroll)
+        ImGui::SetScrollHereY(1.0f);
+    
+    ImGui::EndChild();
+    ImGui::End();
 
-    // Render frame
     ImGui::Render();
-    glViewport(0, 0, display_w, display_h);
-    glClearColor(0.12f, 0.12f, 0.12f, 1.0f);
+    glViewport(0,0,w,h);
+    glClearColor(0.12f,0.12f,0.12f,1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    ImGuiIO& io = ImGui::GetIO();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(window);
-    }
 
     glfwSwapBuffers(window);
 }
 
+void PulseLauncher::LoadingWindow(int w, int h)
+{
+    ImGui::SetNextWindowSize(ImVec2((float)w, (float)h));
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoInputs;
+    ImGui::Begin("Splash", nullptr, flags);
+
+    ImVec2 textSize = ImGui::CalcTextSize(progressValue >= 1.0f ? "Engine loaded." : statusText.c_str());
+    ImGui::SetCursorPos(ImVec2((w - textSize.x) * 0.5f, h * 0.45f));
+    ImGui::Text("%s", progressValue >= 1.0f ? "Engine loaded." : statusText.c_str());
+
+    ImGui::SetCursorPos(ImVec2(w * 0.25f, h * 0.55f));
+    ImGui::ProgressBar(progressValue, ImVec2(w * 0.5f, 30));
+
+    ImGui::End();
+}
 void PulseLauncher::CleanupLauncher()
 {
     if (!window) return;
@@ -224,18 +229,11 @@ void PulseLauncher::CleanupLauncher()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
+    if (pi.hProcess) CloseHandle(pi.hProcess);
+    if (pi.hThread) CloseHandle(pi.hThread);
+    if (hReadPipe) CloseHandle(hReadPipe);
+
     glfwDestroyWindow(window);
     glfwTerminate();
     window = nullptr;
-}
-void PulseLauncher::StartLaunchCountdown(const std::string& projectName_,
-                                         const std::string& engineExe_,
-                                         const std::string& projectDir_)
-{
-    projectName = projectName_;
-    enginePath = engineExe_;
-    projectPath = projectDir_;
-
-    launchStartTime = std::chrono::steady_clock::now();
-    launching = true;
 }
